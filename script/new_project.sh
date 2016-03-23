@@ -14,7 +14,8 @@ else
 fi
 
 # NOTE: while this works; in the end, it's owned by vagrant.
-# and it warns, "Don't run Bundler as root."
+# ...like really, really owned by vagrant. apparently, you can't chown shared folders.
+# ...or more accurately, you can chown all you want, in the end, vagrant just disregards it
 if grep -q +application $USERHOME/.provisioning-progress; then
   echo "--> application already created, moving on."
 else
@@ -23,6 +24,7 @@ else
 	cd /opt/
 	rails new $APPLICATION_NAME -d postgresql --skip-bundle
 	cd $APPLICATION_NAME
+  # TODO: "Don't run Bundler as root."
 	bundle install --path vendor/bundle
 	sudo chown $APPLICATION_USER: /opt/$APPLICATION_NAME
   echo +application >> $USERHOME/.provisioning-progress

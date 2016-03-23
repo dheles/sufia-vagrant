@@ -74,7 +74,9 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
   config.vm.provision "install", type: "shell", path: "script/bootstrap.sh"
+  config.vm.provision "ruby_and_rails", type: "shell", path: "script/ruby_and_rails.sh"
   config.vm.provision "confirmation", type: "shell", path: "script/bootstrap_confirm.sh"
+
 
   # provision authorized ssh key for deployment
   config.vm.provision "file", source: "public_ssh_key/authorized_key.pub", destination: ".ssh/authorized_key.pub"

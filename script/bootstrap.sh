@@ -14,7 +14,7 @@ else
   echo "--> Progress file exists in $USERHOME/.provisioning-progress"
 fi
 
-sudo yum update
+sudo yum update -y
 
 # install prereqs
 if grep -q +prereqs $USERHOME/.provisioning-progress; then
@@ -92,38 +92,6 @@ else
   cd $USERHOME
   echo +FITS >> $USERHOME/.provisioning-progress
   echo "--> FITS now installed."
-fi
-
-# ruby
-if grep -q +ruby $USERHOME/.provisioning-progress; then
-  echo "--> ruby already installed, moving on."
-else
-  echo "--> Installing ruby..."
-  # using Software Collections: https://www.softwarecollections.org/en/scls/rhscl/rh-ruby22/
-  # On CentOS, install package centos-release-scl available in CentOS repository:
-  sudo yum install -y centos-release-scl
-  # 2. Install the collection:
-  sudo yum install -y rh-ruby22
-  # 3. Start using software collections:
-  su vagrant -c "scl enable rh-ruby22 bash"
-  echo +ruby >> $USERHOME/.provisioning-progress
-  echo "--> ruby now installed."
-fi
-
-# rails
-# TODO: for some reason, provisioner can't find .provisioning-progress for this step
-if grep -q +rails $USERHOME/.provisioning-progress; then
-  echo "--> rails already installed, moving on."
-else
-  echo "--> Installing rails..."
-	echo -e "export PATH=\$PATH:/usr/local/bin/" | sudo tee -a /etc/profile.d/ruby-on-rails.sh
-	source /etc/profile
-	gem install bundler --no-rdoc --no-ri
-	gem install rails -v 4.2 --no-rdoc --no-ri
-	sudo yum install -y libpqxx-devel
-	gem install pg -v '0.18.4' --no-rdoc --no-ri
-  echo +rails >> $USERHOME/.provisioning-progress
-  echo "--> rails now installed."
 fi
 
 # adduser
