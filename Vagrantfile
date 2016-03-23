@@ -23,6 +23,7 @@ Vagrant.configure(2) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network :forwarded_port, guest: 3000, host: 3000
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -39,7 +40,6 @@ Vagrant.configure(2) do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
   config.vm.synced_folder ".", "/vagrant"
-  #config.vm.synced_folder "newsletter-demo", "/opt/newsletter-demo", owner: "sufia", group: "sufia"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -63,6 +63,9 @@ Vagrant.configure(2) do |config|
   #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
   # end
 
+  # provision files
+  # config.vm.provision "file", source: "rbenv.sh", destination: "rbenv.sh"
+
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
@@ -70,5 +73,15 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get update
   #   sudo apt-get install -y apache2
   # SHELL
-  config.vm.provision :shell, path: "bootstrap.sh"
+  config.vm.provision "install", type: "shell", path: "script/bootstrap.sh"
+  config.vm.provision "confirmation", type: "shell", path: "script/bootstrap_confirm.sh"
+
+  # provision authorized ssh key for deployment
+  config.vm.provision "file", source: "public_ssh_key/authorized_key.pub", destination: ".ssh/authorized_key.pub"
+  config.vm.provision "authorized key", type: "shell", path: "script/authorized_key.sh"
+
+  config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
+  # NOTE: putting this down here does not affect the order in which it happens.
+  # see: https://github.com/mitchellh/vagrant/issues/936
+  config.vm.synced_folder "newsletter-demo", "/opt/newsletter-demo"
 end
