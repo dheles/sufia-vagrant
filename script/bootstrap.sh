@@ -1,21 +1,23 @@
 #!/usr/bin/env bash
 
-# TODO: add sudo in for use outside of vagrant
+# provisioning-progress as seen here: https://gist.github.com/luciancancescu/57025d19da727cfdc18f
 # TODO: vagrant runs all provisioning as root,
 # ...so anything we want owned as vagrant, we'll have to make so (or su vagrant at beginning of script or something)
-# TODO: incorporate provisioning-progress as here: https://gist.github.com/luciancancescu/57025d19da727cfdc18f
 
-if [ ! -f /home/vagrant/.provisioning-progress ]; then
-  touch /home/vagrant/.provisioning-progress
-  echo "--> Progress file created in /home/vagrant/.provision-progress"
+USER="vagrant"
+USERHOME="/home/$USER"
+
+if [ ! -f $USERHOME/.provisioning-progress ]; then
+  touch $USERHOME/.provisioning-progress
+  echo "--> Progress file created in $USERHOME/.provision-progress"
 else
-  echo "--> Progress file exists in /home/vagrant/.provisioning-progress"
+  echo "--> Progress file exists in $USERHOME/.provisioning-progress"
 fi
 
 sudo yum update
 
 # install prereqs
-if grep -q +prereqs .provisioning-progress; then
+if grep -q +prereqs $USERHOME/.provisioning-progress; then
   echo "--> prereqs already installed, moving on."
 else
   echo "--> Installing prereqs..."
@@ -24,12 +26,12 @@ else
 	sudo yum install -y unzip
 	sudo yum install -y git
 	sudo yum install -y epel-release
-  echo +prereqs >> /home/vagrant/.provisioning-progress
+  echo +prereqs >> $USERHOME/.provisioning-progress
   echo "--> prereqs are now installed."
 fi
 
 # postgres
-if grep -q +postgres .provisioning-progress; then
+if grep -q +postgres $USERHOME/.provisioning-progress; then
   echo "--> postgres already installed, moving on."
 else
   echo "--> Installing postgres..."
@@ -37,47 +39,48 @@ else
 	sudo postgresql-setup initdb
 	sudo systemctl enable postgresql.service
 	sudo systemctl start postgresql.service
-  echo +postgres >> /home/vagrant/.provisioning-progress
+  echo +postgres >> $USERHOME/.provisioning-progress
   echo "--> postgres now installed."
 fi
 
 # redis
-if grep -q +redis .provisioning-progress; then
+if grep -q +redis $USERHOME/.provisioning-progress; then
   echo "--> redis already installed, moving on."
 else
   echo "--> Installing redis..."
 	sudo yum install -y redis
 	sudo systemctl enable redis
 	sudo systemctl start redis.service
-  echo +redis >> /home/vagrant/.provisioning-progress
+  echo +redis >> $USERHOME/.provisioning-progress
   echo "--> redis now installed."
 fi
 
 # ImageMagick
-if grep -q +ImageMagick .provisioning-progress; then
+if grep -q +ImageMagick $USERHOME/.provisioning-progress; then
   echo "--> ImageMagick already installed, moving on."
 else
   echo "--> Installing ImageMagick..."
 	sudo yum install -y ImageMagick
-  echo +ImageMagick >> /home/vagrant/.provisioning-progress
+  echo +ImageMagick >> $USERHOME/.provisioning-progress
   echo "--> ImageMagick now installed."
 fi
 
 # java
-if grep -q +java .provisioning-progress; then
+if grep -q +java $USERHOME/.provisioning-progress; then
   echo "--> java already installed, moving on."
 else
   echo "--> Installing java..."
 	sudo yum install -y java-1.8.0-openjdk
-  echo +java >> /home/vagrant/.provisioning-progress
+  echo +java >> $USERHOME/.provisioning-progress
   echo "--> java now installed."
 fi
 
 # FITS
-if grep -q +FITS .provisioning-progress; then
+if grep -q +FITS $USERHOME/.provisioning-progress; then
   echo "--> FITS already installed, moving on."
 else
   echo "--> Installing FITS..."
+  cd $USERHOME
 	wget -q http://projects.iq.harvard.edu/files/fits/files/fits-0.6.2.zip
 	unzip -q fits-0.6.2.zip
 	rm fits-0.6.2.zip
@@ -86,51 +89,50 @@ else
 	chmod a+x fits.sh
 	echo -e "export PATH=\$PATH:/opt/fits-0.6.2/" | sudo tee -a /etc/profile.d/fits.sh
 	source /etc/profile
-  echo +FITS >> /home/vagrant/.provisioning-progress
+  cd $USERHOME
+  echo +FITS >> $USERHOME/.provisioning-progress
   echo "--> FITS now installed."
 fi
 
 # ruby
-if grep -q +ruby .provisioning-progress; then
+if grep -q +ruby $USERHOME/.provisioning-progress; then
   echo "--> ruby already installed, moving on."
 else
   echo "--> Installing ruby..."
-	cd ~
-	sudo yum install -y gcc bzip2 openssl-devel libyaml-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel
-	wget -q https://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.4.tar.gz
-	tar -xzf ruby-2.2.4.tar.gz
-	cd ruby-2.2.4
-	./configure
-	make
-	make install
-  echo +ruby >> /home/vagrant/.provisioning-progress
+  # using Software Collections: https://www.softwarecollections.org/en/scls/rhscl/rh-ruby22/
+  # On CentOS, install package centos-release-scl available in CentOS repository:
+  sudo yum install -y centos-release-scl
+  # 2. Install the collection:
+  sudo yum install -y rh-ruby22
+  # 3. Start using software collections:
+  su vagrant -c "scl enable rh-ruby22 bash"
+  echo +ruby >> $USERHOME/.provisioning-progress
   echo "--> ruby now installed."
 fi
 
 # rails
 # TODO: for some reason, provisioner can't find .provisioning-progress for this step
-if grep -q +rails .provisioning-progress; then
+if grep -q +rails $USERHOME/.provisioning-progress; then
   echo "--> rails already installed, moving on."
 else
   echo "--> Installing rails..."
 	echo -e "export PATH=\$PATH:/usr/local/bin/" | sudo tee -a /etc/profile.d/ruby-on-rails.sh
-	cd ~
 	source /etc/profile
 	gem install bundler --no-rdoc --no-ri
 	gem install rails -v 4.2 --no-rdoc --no-ri
 	sudo yum install -y libpqxx-devel
 	gem install pg -v '0.18.4' --no-rdoc --no-ri
-  echo +rails >> /home/vagrant/.provisioning-progress
+  echo +rails >> $USERHOME/.provisioning-progress
   echo "--> rails now installed."
 fi
 
 # adduser
-if grep -q +adduser .provisioning-progress; then
+if grep -q +adduser $USERHOME/.provisioning-progress; then
   echo "--> application user already added, moving on."
 else
   echo "--> adding application user..."
 	sudo adduser sufia
-  echo +adduser >> /home/vagrant/.provisioning-progress
+  echo +adduser >> $USERHOME/.provisioning-progress
   echo "--> application user now added."
 fi
 
