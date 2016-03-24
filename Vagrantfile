@@ -86,4 +86,14 @@ Vagrant.configure(2) do |config|
   # NOTE: putting this down here does not affect the order in which it happens.
   # see: https://github.com/mitchellh/vagrant/issues/936
   config.vm.synced_folder "newsletter-demo", "/opt/newsletter-demo"
+
+  # unfinished. run only to setup a new sufia instance
+  #config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
+
+  # unfininished. run to setup db. presumably for new project or one from git
+  #config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
+
+  # TODO: provision setup of a sufia instance from a git(hub) repo
+
+
 end
