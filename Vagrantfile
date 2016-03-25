@@ -27,7 +27,7 @@ Vagrant.configure(2) do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
+  #config.vm.network "private_network", ip: "192.168.33.10"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -85,15 +85,31 @@ Vagrant.configure(2) do |config|
   config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
   # NOTE: putting this down here does not affect the order in which it happens.
   # see: https://github.com/mitchellh/vagrant/issues/936
-  config.vm.synced_folder "newsletter-demo", "/opt/newsletter-demo"
+  # Map our local user to the vagrant user in the box
+  # config.nfs.map_uid=1000
+  # config.nfs.map_gid=1000
+  config.vm.synced_folder "newsletter-demo", "/opt/newsletter-demo" #, type: "nfs"
 
   # unfinished. run only to setup a new sufia instance
   #config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
 
-  # unfininished. run to setup db. presumably for new project or one from git
-  #config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
-
   # TODO: provision setup of a sufia instance from a git(hub) repo
 
+  # unfininished. run to setup db. presumably for new project or one from git
+  #config.vm.provision "database setup", type: "shell", path: "script/sufia_db.sh"
 
+  # unfininished. run to setup solr and fedora. not likely to be run in final production
+  #config.vm.provision "hydra jetty", type: "shell", path: "script/hydra-jetty.sh"
+
+  # unfinished. run to configure email
+  #config.vm.provision "configure email", type: "shell", path: "script/mail_config.sh"
+
+  # unfinished. run to start background workers
+  #config.vm.provision "background workers", type: "shell", path: "script/background_workers.sh"
+
+  # unfinished. run to install & configure pasenger + apache
+  #config.vm.provision "pasenger + apache", type: "shell", path: "script/pasenger_apache.sh"
+
+  # unfinished. run to precompile and finalize deployment
+  #config.vm.provision "precompile", type: "shell", path: "script/precompile.sh"
 end

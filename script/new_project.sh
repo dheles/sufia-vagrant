@@ -26,6 +26,7 @@ else
 	cd $APPLICATION_NAME
   # TODO: "Don't run Bundler as root."
 	bundle install --path vendor/bundle
+  #doesn't work anyway and causes problems for NFS synced folders in VirtualBox:
 	sudo chown $APPLICATION_USER: /opt/$APPLICATION_NAME
   echo +application >> $USERHOME/.provisioning-progress
 	echo "--> $APPLICATION_NAME created"
