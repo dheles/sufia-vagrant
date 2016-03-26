@@ -2,6 +2,10 @@
 
 APPLICATION_NAME="newsletter-demo"
 
+# install and enable apache
+sudo yum install -y httpd
+sudo systemctl enable httpd.service
+
 # Install EPEL and other prereqs
 sudo yum install -y epel-release pygpgme curl
 
@@ -27,7 +31,8 @@ sudo /usr/sbin/passenger-memory-stats
 # TODO: this should probably be run as the application user:
 passenger-config about ruby-command
 
-# TODO: audit &/or edit
-sudo cp conf/application-apache.conf.template /etc/httpd/conf.d/$APPLICATION_NAME.conf
+# TODO: path properly, then audit &/or edit
+# sudo cp ../conf/application-apache.conf.template /etc/httpd/conf.d/$APPLICATION_NAME.conf
 
-sudo systemctl restart httpd
+# TODO: can't really do this until we are able to edit that^
+#sudo systemctl restart httpd

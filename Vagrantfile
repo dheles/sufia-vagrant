@@ -22,7 +22,7 @@ Vagrant.configure(2) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network "forwarded_port", guest: 80, host: 8080
   config.vm.network :forwarded_port, guest: 3000, host: 3000
 
   # Create a private network, which allows host-only access to the machine
@@ -92,8 +92,13 @@ Vagrant.configure(2) do |config|
 
   # unfinished. run only to setup a new sufia instance
   #config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
+  #config.vm.provision "new sufia", type: "shell", path: "script/new_sufia.sh"
 
   # TODO: provision setup of a sufia instance from a git(hub) repo
+  config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh"
+
+  # unfinished. run to setup config files.
+  #config.vm.provision "config files", type: "shell", path: "script/config_files.sh"
 
   # unfininished. run to setup db. presumably for new project or one from git
   #config.vm.provision "database setup", type: "shell", path: "script/sufia_db.sh"
@@ -107,9 +112,14 @@ Vagrant.configure(2) do |config|
   # unfinished. run to start background workers
   #config.vm.provision "background workers", type: "shell", path: "script/background_workers.sh"
 
-  # unfinished. run to install & configure pasenger + apache
-  #config.vm.provision "pasenger + apache", type: "shell", path: "script/pasenger_apache.sh"
+  # unfinished. run to configure firewall
+  #config.vm.provision "firewall", type: "shell", path: "script/firewall.sh"
+
+  # unfinished. run to install & configure passenger + apache
+  #config.vm.provision "passenger + apache", type: "shell", path: "script/passenger_apache.sh"
 
   # unfinished. run to precompile and finalize deployment
   #config.vm.provision "precompile", type: "shell", path: "script/precompile.sh"
+
+  # TODO: hey, look at this guy: https://gist.github.com/rrosiek/8190550
 end

@@ -8,7 +8,7 @@ DEFAULT_EMAIL="dheles@jhu.edu"
 DEFAULT_EMAIL_CONFIG1="config/initializers/mailboxer.rb"
 DEFAULT_EMAIL_CONFIG2="config/initializers/devise.rb"
 
-sed -i s/"no-reply@mailboxer.com"/$DEFAULT_EMAIL/ <$DEFAULT_EMAIL_CONFIG1
+sed -i s/"no-reply@mailboxer.com"/$DEFAULT_EMAIL/ $DEFAULT_EMAIL_CONFIG1
 sed -i "s/config.mailer_sender.*/config.mailer_sender = '$DEFAULT_EMAIL'/" $DEFAULT_EMAIL_CONFIG2
 
 # TODO: script:

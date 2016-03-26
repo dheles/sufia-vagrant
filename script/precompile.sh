@@ -4,5 +4,5 @@ APPLICATION_LOCATION="/opt/newsletter-demo"
 RAILS_ENVIRONMENT="development"
 
 cd $APPLICATION_LOCATION
-rake assets:precompile RAILS_ENV=$RAILS_ENVIRONMENT
+bundle exec rake assets:precompile RAILS_ENV=$RAILS_ENVIRONMENT
 sudo systemctl restart httpd
