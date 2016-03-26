@@ -5,6 +5,7 @@ USERHOME="/home/$USER"
 
 APPLICATION_NAME="newsletter-demo"
 APPLICATION_USER="sufia"
+REPO="https://github.com/jhu-sheridan-libraries/newsletter-demo.git"
 
 if [ ! -f $USERHOME/.provisioning-progress ]; then
   touch $USERHOME/.provisioning-progress
@@ -20,10 +21,10 @@ else
 	sudo mkdir -p /opt/$APPLICATION_NAME
 	cd /opt/
 	sudo chown $APPLICATION_USER: /opt/$APPLICATION_NAME
-	git clone https://github.com/jhu-sheridan-libraries/newsletter-demo.git $APPLICATION_NAME
+	git clone $REPO $APPLICATION_NAME
 	cd $APPLICATION_NAME
 	# TODO: assumes a production deployment. parameterize.
-	bundle install --without development
+	sudo -u $APPLICATION_USER bash -c "bundle install --deployment --without development"
   echo +sufia >> $USERHOME/.provisioning-progress
 	echo "--> $APPLICATION_NAME created"
 fi
