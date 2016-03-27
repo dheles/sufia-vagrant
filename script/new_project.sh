@@ -5,6 +5,7 @@ USERHOME="/home/$USER"
 
 APPLICATION_NAME="newsletter-demo"
 APPLICATION_USER="sufia"
+APPLICATION_LOCATION="$USERHOME/$APPLICATION_NAME"
 
 if [ ! -f $USERHOME/.provisioning-progress ]; then
   touch $USERHOME/.provisioning-progress
@@ -20,14 +21,15 @@ if grep -q +application $USERHOME/.provisioning-progress; then
   echo "--> application already created, moving on."
 else
   echo "--> creating $APPLICATION_NAME"
-	sudo mkdir -p /opt/$APPLICATION_NAME
-	cd /opt/
-	rails new $APPLICATION_NAME -d postgresql --skip-bundle
-	cd $APPLICATION_NAME
+	sudo mkdir -p $APPLICATION_LOCATION
+  sudo chown $APPLICATION_USER: $APPLICATION_LOCATION
+	#cd $USERHOME/
+	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_LOCATION && rails new $APPLICATION_NAME -d postgresql --skip-bundle"
+	#cd $APPLICATION_NAME
   # TODO: "Don't run Bundler as root."
-	bundle install --path vendor/bundle
+	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_LOCATION && bundle install --path vendor/bundle"
   #doesn't work anyway and causes problems for NFS synced folders in VirtualBox:
-	sudo chown $APPLICATION_USER: /opt/$APPLICATION_NAME
+	#sudo chown $APPLICATION_USER: $USERHOME/$APPLICATION_NAME
   echo +application >> $USERHOME/.provisioning-progress
 	echo "--> $APPLICATION_NAME created"
 fi

@@ -19,8 +19,8 @@ sudo -u postgres bash -c "createdb -O $APPLICATION_USER ${APPLICATION_NAME}_prod
 
 echo -e "*:*:${APPLICATION_NAME}_production:$APPLICATION_USER:$APPLICATION_USER_PASSWORD" | sudo tee -a /home/$APPLICATION_USER/.pgpass
 sudo chmod 0600 /home/$APPLICATION_USER/.pgpass
-# TODO: make actually edit the file, not just stdout
-#sed "s/password:/#password:/" < /opt/$APPLICATION_NAME/config/database.yml
+# TODO: review this:
+sed -i "s/password:/#password:/g" /opt/$APPLICATION_NAME/config/database.yml
 
 # for stage and test:
 # TODO: this one really needs work...

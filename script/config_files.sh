@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # TODO: script configuration of these files
+# TODO: run as application user or chown the results to them
 
 APPLICATION_LOCATION=~/Source/sufia-vm/newsletter-demo
 

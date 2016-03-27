@@ -32,7 +32,7 @@ sudo /usr/sbin/passenger-memory-stats
 passenger-config about ruby-command
 
 # TODO: path properly, then audit &/or edit
-# sudo cp ../conf/application-apache.conf.template /etc/httpd/conf.d/$APPLICATION_NAME.conf
+sudo cp ../conf/application-apache.conf.template /etc/httpd/conf.d/$APPLICATION_NAME.conf
 
 # TODO: can't really do this until we are able to edit that^
 #sudo systemctl restart httpd

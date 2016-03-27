@@ -22,8 +22,8 @@ Vagrant.configure(2) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network :forwarded_port, guest: 3000, host: 3000
+  config.vm.network "forwarded_port", guest: 80, host: 8081
+  config.vm.network "forwarded_port", guest: 3000, host: 3001
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -55,6 +55,9 @@ Vagrant.configure(2) do |config|
   #
   # View the documentation for the provider you are using for more
   # information on available options.
+  config.vm.provider "virtualbox" do |vb|
+      vb.name = "archives-demo"
+  end
 
   # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
   # such as FTP and Heroku are also available. See the documentation at
@@ -82,20 +85,19 @@ Vagrant.configure(2) do |config|
   config.vm.provision "file", source: "public_ssh_key/authorized_key.pub", destination: ".ssh/authorized_key.pub"
   config.vm.provision "authorized key", type: "shell", path: "script/authorized_key.sh"
 
-  config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
   # NOTE: putting this down here does not affect the order in which it happens.
   # see: https://github.com/mitchellh/vagrant/issues/936
   # Map our local user to the vagrant user in the box
   # config.nfs.map_uid=1000
   # config.nfs.map_gid=1000
-  config.vm.synced_folder "newsletter-demo", "/opt/newsletter-demo" #, type: "nfs"
+  #config.vm.synced_folder "newsletter-demo", "/opt/newsletter-demo" #, type: "nfs"
 
   # unfinished. run only to setup a new sufia instance
-  #config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
-  #config.vm.provision "new sufia", type: "shell", path: "script/new_sufia.sh"
+  config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
+  config.vm.provision "new sufia", type: "shell", path: "script/new_sufia.sh"
 
   # TODO: provision setup of a sufia instance from a git(hub) repo
-  config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh"
+  #config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh"
 
   # unfinished. run to setup config files.
   #config.vm.provision "config files", type: "shell", path: "script/config_files.sh"
