@@ -92,9 +92,15 @@ Vagrant.configure(2) do |config|
   # config.nfs.map_gid=1000
   #config.vm.synced_folder "newsletter-demo", "/opt/newsletter-demo" #, type: "nfs"
 
-  # unfinished. run only to setup a new sufia instance
+  # run the following series only to setup a new sufia instance
+  # begin: new sufia series
   config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
   config.vm.provision "new sufia", type: "shell", path: "script/new_sufia.sh"
+  # NOTE: no, no, no. this just killed the contents of my folder i had worked so hard to create...
+  # NOTE: user does not exist until all previous steps have completed.
+  #   comment out, provision to this point, comment back in and 'vagrant reload'
+  config.vm.synced_folder "project-code", "/vagrant" #, owner:"sufia", group:"sufia"
+  # end: new sufia series
 
   # TODO: provision setup of a sufia instance from a git(hub) repo
   #config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh"
