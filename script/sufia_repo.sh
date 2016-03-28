@@ -6,7 +6,7 @@ USERHOME="/home/$USER"
 APPLICATION_NAME="newsletter-demo"
 APPLICATION_LOCATION="/opt/$APPLICATION_NAME"
 APPLICATION_USER="sufia"
-REPO="https://github.com/jhu-sheridan-libraries/newsletter-demo.git"
+REPO="https://github.com/dheles/archives-demo.git"
 
 if [ ! -f $USERHOME/.provisioning-progress ]; then
   touch $USERHOME/.provisioning-progress
