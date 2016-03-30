@@ -23,7 +23,6 @@ else
 	cd /opt/
 	git clone $REPO $APPLICATION_NAME
 	sudo chown -R $APPLICATION_USER: /opt/$APPLICATION_NAME
-	cd $APPLICATION_NAME
 	# TODO: assumes a production deployment. parameterize.
 	# TODO: can't seem to use bundle from script
 	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_LOCATION && bundle install --deployment --without development"

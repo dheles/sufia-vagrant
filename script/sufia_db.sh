@@ -1,16 +1,22 @@
 #!/usr/bin/env bash
 
-# NOTE: this script is untested - essentially notes for a script for a time when there is more time
+# NOTE: this script is not yet done - essentially notes for a script for a time when there is more time
 
 APPLICATION_USER="vagrant"
 APPLICATION_USER_PASSWORD="vagrant"
 APPLICATION_NAME="newsletter-demo"
+APPLICATION_LOCATION="/opt/$APPLICATION_NAME"
 # TODO: get this from a single location:
 RAILS_ENVIRONMENT="development"
 
 # database setup
 
 sudo -u postgres bash -c "psql -c \"CREATE USER $APPLICATION_USER WITH CREATEDB PASSWORD '$APPLICATION_USER_PASSWORD';\""
+
+# drop the databases in case they already exist. i damn potent.
+sudo -u postgres bash -c "dropdb ${APPLICATION_NAME}_development;"
+sudo -u postgres bash -c "dropdb ${APPLICATION_NAME}_test;"
+sudo -u postgres bash -c "dropdb ${APPLICATION_NAME}_production;"
 
 # surely, we don't really need all three...
 sudo -u postgres bash -c "createdb -O $APPLICATION_USER ${APPLICATION_NAME}_development;"
@@ -20,7 +26,7 @@ sudo -u postgres bash -c "createdb -O $APPLICATION_USER ${APPLICATION_NAME}_prod
 echo -e "*:*:${APPLICATION_NAME}_production:$APPLICATION_USER:$APPLICATION_USER_PASSWORD" | sudo tee -a /home/$APPLICATION_USER/.pgpass
 sudo chmod 0600 /home/$APPLICATION_USER/.pgpass
 # TODO: review this:
-sed -i "s/password:/#password:/g" /opt/$APPLICATION_NAME/config/database.yml
+sudo su - $APPLICATION_USER bash -c "sed -i 's/password:/#password:/g' /opt/$APPLICATION_NAME/config/database.yml"
 
 # for stage and test:
 # TODO: this one really needs work...
@@ -29,5 +35,4 @@ sed -i "s/password:/#password:/g" /opt/$APPLICATION_NAME/config/database.yml
 # for production:
 #export "SECRET_KEY_BASE=`bundle exec rake secret`"
 
-cd /opt/$APPLICATION_NAME
-bundle exec rake db:migrate RAILS_ENV=$RAILS_ENVIRONMENT
+sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_LOCATION && bundle exec rake db:migrate RAILS_ENV=$RAILS_ENVIRONMENT"

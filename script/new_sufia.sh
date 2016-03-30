@@ -33,6 +33,9 @@ else
   gem 'devise'
   gem 'devise-guests', '~> 0.3'
 
+  # limit ActiveFedora to safe range
+  gem 'active-fedora', '~> 9.4', '< 9.8'
+
 EOF
 
 	# NOTE: currently a problem with rubyracer. use nodejs instead
