@@ -18,7 +18,7 @@ sed -i "s/config.mailer_sender.*/config.mailer_sender = '$DEFAULT_EMAIL'/" $DEFA
 # When setting this property to :smtp, also ensure
 # additional config.action_mailer properties are
 # set in  ../initializers/setup_mail.rb
-config.action_mailer.delivery_method = :smtp
+#config.action_mailer.delivery_method = :smtp
 
 # # rename and edit:
 # # config/initializers/setup_mail.rb.template

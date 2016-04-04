@@ -1,10 +1,10 @@
-PassengerRuby /opt/rbenv/versions/2.2.4/bin/ruby
 <VirtualHost *:80>
     ServerName SERVERNAME.mse.jhu.edu
 
     # Tell Apache and Passenger where your app's 'public' directory is
     DocumentRoot /opt/APPLICATION_NAME/public
 
+    PassengerRuby /opt/rbenv/versions/2.2.4/bin/ruby
     PassengerAppEnv development
 
     # Relax Apache security settings

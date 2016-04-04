@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+USER="vagrant"
+#USERHOME="/home/$USER"
+APPLICATION_NAME="newsletter-demo"
+APPLICATION_USER="sufia"
+APPLICATION_USER_PASSWORD="vagrant"
+#APPLICATION_USER_HOME="/home/$APPLICATION_USER"
+#APPLICATION_BUILD_LOCATION="$APPLICATION_USER_HOME/$APPLICATION_NAME"
+#APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
+REPO="https://github.com/dheles/archives-demo.git"
+BRANCH="--branch active-fedora_lessthan_9.8"
+#VAR_FILE="$APPLICATION_LOCATION/.rbenv-vars"
+RAILS_ENVIRONMENT="development"
+DEFAULT_EMAIL="dheles@jhu.edu"

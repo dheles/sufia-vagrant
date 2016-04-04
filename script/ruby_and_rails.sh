@@ -31,6 +31,7 @@ else
 		# Install rbenv
 		git clone git://github.com/sstephenson/rbenv.git /usr/local/rbenv
 		git clone git://github.com/sstephenson/ruby-build.git /usr/local/rbenv/plugins/ruby-build
+		git clone https://github.com/rbenv/rbenv-vars.git /usr/local/rbenv/plugins/rbenv-vars
 
 		# Check if clone succesful
 		if [ $? -gt 0 ]; then
