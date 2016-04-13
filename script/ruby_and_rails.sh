@@ -3,23 +3,44 @@
 # provisioning-progress as seen here: https://gist.github.com/luciancancescu/57025d19da727cfdc18f
 # adapted from https://gist.github.com/jpfuentes2/2002954
 
-USER="vagrant"
-USERHOME="/home/$USER"
+function usage
+{
+  echo "usage: ruby_and_rails [[[-a ADMIN ] | [-h]]"
+}
+
+# set defaults:
+ADMIN="vagrant"
+ADMIN_HOME="/home/$ADMIN"
+
+# process arguments:
+while [ "$1" != "" ]; do
+  case $1 in
+    -a | --admin )    shift
+                      ADMIN=$1
+                      ;;
+    -h | --help )     usage
+                      exit
+                      ;;
+    * )               usage
+                      exit 1
+  esac
+  shift
+done
 
 # ruby
-if [ ! -f $USERHOME/.provisioning-progress ]; then
-  touch $USERHOME/.provisioning-progress
-  echo "--> Progress file created in $USERHOME/.provision-progress"
+if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
+  touch $ADMIN_HOME/.provisioning-progress
+  echo "--> Progress file created in $ADMIN_HOME/.provision-progress"
 else
-  echo "--> Progress file exists in $USERHOME/.provisioning-progress"
+  echo "--> Progress file exists in $ADMIN_HOME/.provisioning-progress"
 fi
 
 # ruby
-if grep -q +ruby $USERHOME/.provisioning-progress; then
+if grep -q +ruby $ADMIN_HOME/.provisioning-progress; then
   echo "--> ruby already installed, moving on."
 else
   echo "--> Installing ruby..."
-	cd $USERHOME
+	cd $ADMIN_HOME
 	# Install dependent packages
 	sudo yum install -y gcc bzip2 openssl-devel libyaml-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel
 
@@ -80,12 +101,12 @@ else
 	fi
 
 	ruby -v
-  echo +ruby >> $USERHOME/.provisioning-progress
+  echo +ruby >> $ADMIN_HOME/.provisioning-progress
   echo "--> ruby now installed."
 fi
 
 # rails
-if grep -q +rails $USERHOME/.provisioning-progress; then
+if grep -q +rails $ADMIN_HOME/.provisioning-progress; then
   echo "--> rails already installed, moving on."
 else
   echo "--> Installing rails..."
@@ -93,6 +114,6 @@ else
 	sudo yum install -y libpqxx-devel
 	gem install pg -v '0.18.4'
 	rails -v
-  echo +rails >> $USERHOME/.provisioning-progress
+  echo +rails >> $ADMIN_HOME/.provisioning-progress
   echo "--> rails now installed."
 fi

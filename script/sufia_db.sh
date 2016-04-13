@@ -1,50 +1,77 @@
 #!/usr/bin/env bash
 
-# NOTE: this script is not yet done - essentially notes for a script for a time when there is more time
+# sets up a database for a sufia instance
+function usage
+{
+  echo "usage: sufia_db [[[-a ADMIN ] [-u APPLICATION_USER]] [-p APPLICATION_USER_PASSWORD]] [-n APPLICATION_NAME]] [-e RAILS_ENVIRONMENT]] | [-h]]"
+}
 
-USER="vagrant"
-USERHOME="/home/$USER"
+# set defaults:
+ADMIN="vagrant"
+ADMIN_HOME="/home/$ADMIN"
 
-APPLICATION_USER="vagrant"
+APPLICATION_USER="sufia"
 APPLICATION_USER_PASSWORD="vagrant"
 APPLICATION_NAME="newsletter-demo"
-APPLICATION_LOCATION="/opt/$APPLICATION_NAME"
-# TODO: get this from a single location:
+APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 RAILS_ENVIRONMENT="development"
 
+# process arguments:
+while [ "$1" != "" ]; do
+  case $1 in
+    -a | --admin )        shift
+                          ADMIN=$1
+                          ;;
+    -u | --user )         APPLICATION_USER=$1
+                          ;;
+    -p | --password )     APPLICATION_USER_PASSWORD=$1
+                          ;;
+    -n | --name )         APPLICATION_NAME=$1
+                          ;;
+    -e | --environment )  RAILS_ENVIRONMENT=$1
+                          ;;
+    -h | --help )         usage
+                          exit
+                          ;;
+    * )                   usage
+                          exit 1
+  esac
+  shift
+done
+
 # database setup
-if [ ! -f $USERHOME/.provisioning-progress ]; then
-  touch $USERHOME/.provisioning-progress
-  echo "--> Progress file created in $USERHOME/.provision-progress"
+if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
+  touch $ADMIN_HOME/.provisioning-progress
+  echo "--> Progress file created in $ADMIN_HOME/.provision-progress"
 else
-  echo "--> Progress file exists in $USERHOME/.provisioning-progress"
+  echo "--> Progress file exists in $ADMIN_HOME/.provisioning-progress"
 fi
 
 # ruby
-if grep -q +database $USERHOME/.provisioning-progress; then
+if grep -q +database $ADMIN_HOME/.provisioning-progress; then
   echo "--> Database already configured, moving on."
 else
   echo "--> Configuring database..."
 
 	# drop the databases and user in case they already exist. i damn potent.
-	sudo -u postgres bash -c "dropdb ${APPLICATION_NAME}_development;"
-	sudo -u postgres bash -c "dropdb ${APPLICATION_NAME}_test;"
-	sudo -u postgres bash -c "dropdb ${APPLICATION_NAME}_production;"
-	sudo -u postgres bash -c "psql -c \"DROP USER IF EXISTS $APPLICATION_USER;\""
+	sudo su - postgres bash -c "dropdb ${APPLICATION_NAME}_$RAILS_ENVIRONMENT;"
+	# sudo su - postgres bash -c "dropdb ${APPLICATION_NAME}_test;"
+	# sudo su - postgres bash -c "dropdb ${APPLICATION_NAME}_production;"
+	sudo su - postgres bash -c "psql -c \"DROP USER IF EXISTS $APPLICATION_USER;\""
 
-	sudo -u postgres bash -c "psql -c \"CREATE USER $APPLICATION_USER WITH CREATEDB PASSWORD '$APPLICATION_USER_PASSWORD';\""
+	sudo su - postgres bash -c "psql -c \"CREATE USER $APPLICATION_USER WITH CREATEDB PASSWORD '$APPLICATION_USER_PASSWORD';\""
 
 	# surely, we don't really need all three...
-	sudo -u postgres bash -c "createdb -O $APPLICATION_USER ${APPLICATION_NAME}_development;"
-	sudo -u postgres bash -c "createdb -O $APPLICATION_USER ${APPLICATION_NAME}_test;"
-	sudo -u postgres bash -c "createdb -O $APPLICATION_USER ${APPLICATION_NAME}_production;"
+	sudo su - postgres bash -c "createdb -O $APPLICATION_USER ${APPLICATION_NAME}_$RAILS_ENVIRONMENT;"
+	# sudo su - postgres bash -c "createdb -O $APPLICATION_USER ${APPLICATION_NAME}_test;"
+	# sudo su - postgres bash -c "createdb -O $APPLICATION_USER ${APPLICATION_NAME}_production;"
 
 	# echo -e "*:*:${APPLICATION_NAME}_production:$APPLICATION_USER:$APPLICATION_USER_PASSWORD" | sudo tee -a /home/$APPLICATION_USER/.pgpass
 	# sudo chmod 0600 /home/$APPLICATION_USER/.pgpass
 	# # TODO: review this:
 	# sudo su - $APPLICATION_USER bash -c "sed -i 's/password:/#password:/g' /opt/$APPLICATION_NAME/config/database.yml"
 
-	var_file="$APPLICATION_LOCATION/.rbenv-vars"
+	var_file="$APPLICATION_INSTALL_LOCATION/.rbenv-vars"
 	if [ ! -f "$var_file" ]; then
 	  sudo su - $APPLICATION_USER bash -c "touch $var_file"
 	  echo "--> Environment variables file created in $var_file"
@@ -61,7 +88,7 @@ else
 		sudo su - $APPLICATION_USER bash -c "echo $password_var=$APPLICATION_USER_PASSWORD >> $var_file"
 		echo "--> Database password added to environment variables file"
 	}
-	sudo su - $APPLICATION_USER bash -c "sed -i 's/username:.*/username: $APPLICATION_USER/' $APPLICATION_LOCATION/config/database.yml"
+	sudo su - $APPLICATION_USER bash -c "sed -i 's/username:.*/username: $APPLICATION_USER/' $APPLICATION_INSTALL_LOCATION/config/database.yml"
 
 	# for stage and test:
 	# TODO: this one really needs work...
@@ -70,8 +97,8 @@ else
 	# for production:
 	#export "SECRET_KEY_BASE=`bundle exec rake secret`"
 
-	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_LOCATION && bundle exec rake db:migrate RAILS_ENV=$RAILS_ENVIRONMENT"
+	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle exec rake db:migrate RAILS_ENV=$RAILS_ENVIRONMENT"
 
-  echo +database >> $USERHOME/.provisioning-progress
+  echo +database >> $ADMIN_HOME/.provisioning-progress
   echo "--> Database now configured."
 fi

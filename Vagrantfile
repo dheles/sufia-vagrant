@@ -97,6 +97,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
   config.vm.provision "new sufia", type: "shell", path: "script/new_sufia.sh"
   config.vm.provision "config templates", type: "shell", path: "script/config_templates.sh"
+  config.vm.provision "move sufia", type: "shell", path: "script/move_sufia.sh"
   config.vm.synced_folder "project-code", "/vagrant"
   # TODO: script copy to synced_folder for checking into GitHub and to deployment location of testing
   # end: new sufia series
@@ -105,31 +106,31 @@ Vagrant.configure(2) do |config|
   #config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh"
 
   # untested. run to configure environment variables
-  #config.vm.provision "environment variables", type: "shell", path: "script/env_vars.sh"
+  config.vm.provision "environment variables", type: "shell", path: "script/env_vars.sh"
 
   # unfinished. run to setup config files.
-  #config.vm.provision "config files", type: "shell", path: "script/config_files.sh"
+  config.vm.provision "config files", type: "shell", path: "script/config_files.sh"
 
   # unfininished. run to setup db. presumably for new project or one from git
-  #config.vm.provision "database setup", type: "shell", path: "script/sufia_db.sh"
+  config.vm.provision "database setup", type: "shell", path: "script/sufia_db.sh"
 
   # unfininished. run to setup solr and fedora. not likely to be run in final production
-  #config.vm.provision "hydra jetty", type: "shell", path: "script/hydra-jetty.sh"
+  config.vm.provision "hydra jetty", type: "shell", path: "script/hydra-jetty.sh"
 
   # unfinished. run to configure email
-  #config.vm.provision "configure email", type: "shell", path: "script/mail_config.sh"
+  config.vm.provision "configure email", type: "shell", path: "script/mail_config.sh"
 
   # unfinished. run to start background workers
-  #config.vm.provision "background workers", type: "shell", path: "script/background_workers.sh"
+  config.vm.provision "background workers", type: "shell", path: "script/background_workers.sh"
 
   # unfinished. run to configure firewall
-  #config.vm.provision "firewall", type: "shell", path: "script/firewall.sh"
+  config.vm.provision "firewall", type: "shell", path: "script/firewall.sh"
 
   # unfinished. run to install & configure passenger + apache
-  #config.vm.provision "passenger + apache", type: "shell", path: "script/passenger_apache.sh"
+  config.vm.provision "passenger + apache", type: "shell", path: "script/passenger_apache.sh"
 
   # unfinished. run to precompile and finalize deployment
-  #config.vm.provision "precompile", type: "shell", path: "script/precompile.sh"
+  config.vm.provision "precompile", type: "shell", path: "script/precompile.sh"
 
   # TODO: hey, look at this guy: https://gist.github.com/rrosiek/8190550
 end

@@ -1,26 +1,50 @@
 #!/usr/bin/env bash
 
 # TODO: script configuration of these files
-# TODO: run as application user or chown the results to them
+function usage
+{
+  echo "usage: config_files [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME]] | [-h]]"
+}
 
-USER="vagrant"
-USERHOME="/home/$USER"
+# set defaults:
+ADMIN="vagrant"
+ADMIN_HOME="/home/$ADMIN"
 
-APPLICATION_LOCATION=~/Source/archives-demo/project-code/newsletter-demo
 APPLICATION_USER="sufia"
+APPLICATION_NAME="newsletter-demo"
+APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 
-if [ ! -f $USERHOME/.provisioning-progress ]; then
-  touch $USERHOME/.provisioning-progress
-  echo "--> Progress file created in $USERHOME/.provision-progress"
+# process arguments:
+while [ "$1" != "" ]; do
+  case $1 in
+    -a | --admin )    shift
+                      ADMIN=$1
+                      ;;
+    -u | --user )     APPLICATION_USER=$1
+                      ;;
+    -n | --name )     APPLICATION_NAME=$1
+                      ;;
+    -h | --help )     usage
+                      exit
+                      ;;
+    * )               usage
+                      exit 1
+  esac
+  shift
+done
+
+if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
+  touch $ADMIN_HOME/.provisioning-progress
+  echo "--> Progress file created in $ADMIN_HOME/.provision-progress"
 else
-  echo "--> Progress file exists in $USERHOME/.provisioning-progress"
+  echo "--> Progress file exists in $ADMIN_HOME/.provisioning-progress"
 fi
 
-if grep -q +config_files $USERHOME/.provisioning-progress; then
+if grep -q +config_files $ADMIN_HOME/.provisioning-progress; then
   echo "--> config_files already created, moving on."
 else
   echo "--> creating config_files"
-	pushd $APPLICATION_LOCATION/config
+	pushd $APPLICATION_INSTALL_LOCATION/config
 		cp analytics.yml.template analytics.yml
 		cp blacklight.yml.template blacklight.yml
 		cp database.yml.template database.yml
@@ -29,10 +53,10 @@ else
 		cp redis.yml.template redis.yml
 		cp secrets.yml.template secrets.yml
 		cp solr.yml.template solr.yml
-		cp environments/development.rb.template environments/development.rb
-		cp environments/production.rb.template environments/production.rb
-		sudo chown -R $APPLICATION_USER: $APPLICATION_LOCATION/config
+		#cp environments/development.rb.template environments/development.rb
+		#cp environments/production.rb.template environments/production.rb
+		sudo chown -R $APPLICATION_USER: $APPLICATION_INSTALL_LOCATION/config
 	popd
-	echo +config_files >> $USERHOME/.provisioning-progress
+	echo +config_files >> $ADMIN_HOME/.provisioning-progress
 	echo "--> config_files created"
 fi

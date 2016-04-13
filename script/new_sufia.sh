@@ -1,28 +1,52 @@
 #!/usr/bin/env bash
 
 # turns a generic rails app into a sufia app
+function usage
+{
+  echo "usage: new_sufia [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME]] | [-h]]"
+}
 
-USER="vagrant"
-USERHOME="/home/$USER"
+# set defaults:
+ADMIN="vagrant"
+ADMIN_HOME="/home/$ADMIN"
 
-APPLICATION_NAME="newsletter-demo"
 APPLICATION_USER="sufia"
-APPLICATION_USERHOME="/home/$APPLICATION_USER"
-APPLICATION_LOCATION="$APPLICATION_USERHOME/$APPLICATION_NAME"
+APPLICATION_USER_HOME="/home/$APPLICATION_USER"
+APPLICATION_NAME="newsletter-demo"
+APPLICATION_BUILD_LOCATION="$APPLICATION_USER_HOME/$APPLICATION_NAME"
 
-if [ ! -f $USERHOME/.provisioning-progress ]; then
-  touch $USERHOME/.provisioning-progress
-  echo "--> Progress file created in $USERHOME/.provision-progress"
+# process arguments:
+while [ "$1" != "" ]; do
+  case $1 in
+    -a | --admin )    shift
+                      ADMIN=$1
+                      ;;
+    -u | --user )     APPLICATION_USER=$1
+                      ;;
+    -n | --name )     APPLICATION_NAME=$1
+                      ;;
+    -h | --help )     usage
+                      exit
+                      ;;
+    * )               usage
+                      exit 1
+  esac
+  shift
+done
+
+if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
+  touch $ADMIN_HOME/.provisioning-progress
+  echo "--> Progress file created in $ADMIN_HOME/.provision-progress"
 else
-  echo "--> Progress file exists in $USERHOME/.provisioning-progress"
+  echo "--> Progress file exists in $ADMIN_HOME/.provisioning-progress"
 fi
 
-if grep -q +$APPLICATION_NAME $USERHOME/.provisioning-progress; then
+if grep -q +$APPLICATION_NAME $ADMIN_HOME/.provisioning-progress; then
   echo "--> $APPLICATION_NAME already created, moving on."
 else
   echo "--> creating $APPLICATION_NAME"
 
-	cat >> $APPLICATION_LOCATION/Gemfile <<EOF
+	cat >> $APPLICATION_BUILD_LOCATION/Gemfile <<EOF
 
   # Sufia-related dependencies
   gem 'sufia', '6.6.0'
@@ -36,6 +60,9 @@ else
   # limit ActiveFedora to safe range
   gem 'active-fedora', '~> 9.4', '< 9.8'
 
+  # pin mail gem to avoid mime-types compatibility issues
+  gem 'mail', '2.6.3'
+
 EOF
 
 	# NOTE: currently a problem with rubyracer. use nodejs instead
@@ -43,14 +70,14 @@ EOF
 	# install a javascript runtime
 	sudo yum install -y nodejs
 
-	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_LOCATION && bundle install --path vendor/bundle"
+	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_BUILD_LOCATION && bundle install --path vendor/bundle"
 	# error: quiver:///notes/5AD6FA54-F5AE-4573-8177-BFC6D587499F
 	#bundle update needed to resolve gem "mime-types" dependency conflict
-  sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_LOCATION && bundle update"
+  sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_BUILD_LOCATION && bundle update"
 
 	# install sufia
-	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_LOCATION && rails generate sufia:install -f"
+	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_BUILD_LOCATION && rails generate sufia:install -f"
 
-	echo +$APPLICATION_NAME >> $USERHOME/.provisioning-progress
+	echo +$APPLICATION_NAME >> $ADMIN_HOME/.provisioning-progress
 	echo "--> $APPLICATION_NAME created"
 fi

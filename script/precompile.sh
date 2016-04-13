@@ -1,8 +1,57 @@
 #!/usr/bin/env bash
 
-APPLICATION_USER="vagrant"
-APPLICATION_LOCATION="/opt/newsletter-demo"
+# precompiles assets for a sufia instance
+# TODO: see about adding the extras in
+function usage
+{
+  echo "usage: precompile [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME] [-e RAILS_ENVIRONMENT] | [-h]]"
+}
+
+# set defaults
+ADMIN="vagrant"
+ADMIN_HOME="/home/$ADMIN"
+
+APPLICATION_USER="sufia"
+APPLICATION_NAME="newsletter-demo"
+APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 RAILS_ENVIRONMENT="development"
 
-sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_LOCATION && bundle exec rake assets:precompile RAILS_ENV=$RAILS_ENVIRONMENT"
-sudo systemctl restart httpd
+# process arguments:
+while [ "$1" != "" ]; do
+  case $1 in
+    -a | --admin )    		shift
+                      		ADMIN=$1
+                      		;;
+    -u | --user )     		APPLICATION_USER=$1
+                      		;;
+    -n | --name )     		APPLICATION_NAME=$1
+                      		;;
+		-e | --environment )  RAILS_ENVIRONMENT=$1
+													;;
+    -h | --help )     		usage
+                      		exit
+                      		;;
+    * )               		usage
+                      		exit 1
+  esac
+  shift
+done
+
+if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
+  touch $ADMIN_HOME/.provisioning-progress
+  echo "--> Progress file created in $ADMIN_HOME/.provision-progress"
+else
+  echo "--> Progress file exists in $ADMIN_HOME/.provisioning-progress"
+fi
+
+if grep -q +precompile $ADMIN_HOME/.provisioning-progress; then
+  echo "--> assets already precompiled, moving on."
+else
+  echo "--> precompiling assets"
+
+	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle exec rake assets:precompile RAILS_ENV=$RAILS_ENVIRONMENT"
+	sudo systemctl restart httpd
+
+	echo +precompile >> $ADMIN_HOME/.provisioning-progress
+	echo "--> assets precompiled"
+fi

@@ -1,34 +1,60 @@
 #!/usr/bin/env bash
 
-USER="vagrant"
-USERHOME="/home/$USER"
+# installs a customized sufia instance from a repo
+function usage
+{
+  echo "usage: sufia_repo [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME]] | [-h]]"
+}
 
-APPLICATION_NAME="newsletter-demo"
-APPLICATION_LOCATION="/opt/$APPLICATION_NAME"
+# set defaults:
+ADMIN="vagrant"
+ADMIN_HOME="/home/$ADMIN"
+
 APPLICATION_USER="sufia"
+APPLICATION_NAME="newsletter-demo"
+APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 REPO="https://github.com/dheles/archives-demo.git"
 BRANCH="--branch active-fedora_lessthan_9.8"
 
-if [ ! -f $USERHOME/.provisioning-progress ]; then
-  touch $USERHOME/.provisioning-progress
-  echo "--> Progress file created in $USERHOME/.provision-progress"
+# process arguments:
+while [ "$1" != "" ]; do
+  case $1 in
+    -a | --admin )    shift
+                      ADMIN=$1
+                      ;;
+    -u | --user )     APPLICATION_USER=$1
+                      ;;
+    -n | --name )     APPLICATION_NAME=$1
+                      ;;
+    -h | --help )     usage
+                      exit
+                      ;;
+    * )               usage
+                      exit 1
+  esac
+  shift
+done
+
+if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
+  touch $ADMIN_HOME/.provisioning-progress
+  echo "--> Progress file created in $ADMIN_HOME/.provision-progress"
 else
-  echo "--> Progress file exists in $USERHOME/.provisioning-progress"
+  echo "--> Progress file exists in $ADMIN_HOME/.provisioning-progress"
 fi
 
-if grep -q +$APPLICATION_NAME $USERHOME/.provisioning-progress; then
+if grep -q +$APPLICATION_NAME $ADMIN_HOME/.provisioning-progress; then
   echo "--> $APPLICATION_NAME already created, moving on."
 else
   echo "--> creating $APPLICATION_NAME"
-  if [ ! -d "$APPLICATION_LOCATION" ]; then
-    sudo mkdir -p $APPLICATION_LOCATION
+  if [ ! -d "$APPLICATION_INSTALL_LOCATION" ]; then
+    sudo mkdir -p $APPLICATION_INSTALL_LOCATION
   else
-    sudo rm -rf $APPLICATION_LOCATION
+    sudo rm -rf $APPLICATION_INSTALL_LOCATION
   fi
-	git clone $REPO $BRANCH $APPLICATION_LOCATION
-	sudo chown -R $APPLICATION_USER: $APPLICATION_LOCATION
+	git clone $REPO $BRANCH $APPLICATION_INSTALL_LOCATION
+	sudo chown -R $APPLICATION_USER: $APPLICATION_INSTALL_LOCATION
 	# TODO: assumes a production deployment. parameterize.
-	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_LOCATION && bundle install --deployment --without development"
-  echo +$APPLICATION_NAME >> $USERHOME/.provisioning-progress
+	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle install --deployment --without development"
+  echo +$APPLICATION_NAME >> $ADMIN_HOME/.provisioning-progress
 	echo "--> $APPLICATION_NAME created"
 fi
