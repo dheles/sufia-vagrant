@@ -1,38 +1,137 @@
 #!/usr/bin/env bash
 
+# sets up environment variables for a sufia instance
+function usage
+{
+  echo "usage: passenger_apache [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME] [-e RAILS_ENVIRONMENT] [-s SERVER_NAME]] [-a SERVER_ALIAS] [-r RUBY] | [-h]]"
+}
+
+# set defaults:
+ADMIN="vagrant"
+ADMIN_HOME="/home/$ADMIN"
+
+APPLICATION_USER="sufia"
 APPLICATION_NAME="newsletter-demo"
+APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
+RAILS_ENVIRONMENT="development"
+SERVER_NAME="archives-demo" # TODO: get from Vagrantfile or master script
+SERVER_ALIAS=""
+RUBY="/usr/local/rbenv/versions/2.2.4/bin/ruby"
 
-# install and enable apache
-sudo yum install -y httpd
-sudo systemctl enable httpd.service
+# current settings for stage:
+# ServerName sufia01.mse.jhu.edu
+# ServerAlias sufia.mse.jhu.edu
+# PassengerRuby /opt/rbenv/versions/2.2.4/bin/ruby
 
-# Install EPEL and other prereqs
-sudo yum install -y epel-release pygpgme curl
+# current settings for prod:
+# ServerName sufia02.mse.jhu.edu
+# ServerAlias archives-demo.mse.jhu.edu archives-demo.library.jhu.edu
+# PassengerRuby /usr/local/rbenv/versions/2.2.4/bin/ruby
 
-# Add phusion's el7 YUM repository
-sudo curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
+# process arguments:
+while [ "$1" != "" ]; do
+  case $1 in
+    -a | --admin )    		shift
+                      		ADMIN=$1
+                      		;;
+    -u | --user )     		APPLICATION_USER=$1
+                      		;;
+    -n | --name )     		APPLICATION_NAME=$1
+                      		;;
+		-e | --environment )  RAILS_ENVIRONMENT=$1
+													;;
+		-s | --server )  			SERVER_NAME=$1
+													;;
+		-a | --alias )  			SERVER_ALIAS=$1
+													;;
+		-r | --ruby )  				RUBY=$1
+													;;
+    -h | --help )     		usage
+                      		exit
+                      		;;
+    * )               		usage
+                      		exit 1
+  esac
+  shift
+done
 
-# Install Passenger + Apache module
-sudo yum install -y mod_passenger
+if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
+  touch $ADMIN_HOME/.provisioning-progress
+  echo "--> Progress file created in $ADMIN_HOME/.provision-progress"
+else
+  echo "--> Progress file exists in $ADMIN_HOME/.provisioning-progress"
+fi
 
-# OPTIONAL: install httpd-devel
-# so we can test apache install
-sudo yum install -y httpd-devel
+if grep -q +passenger_apache $ADMIN_HOME/.provisioning-progress; then
+  echo "--> Passenger & apache already configured, moving on."
+else
+  echo "--> Configuring passenger & apache..."
 
-# restart apache
-sudo systemctl restart httpd
+	# install and enable apache
+	sudo yum install -y httpd
+	sudo systemctl enable httpd.service
 
-# NOTE: this won't work in automation, but manually, one could test the installation thus:
-#sudo /usr/bin/passenger-config validate-install
+	# Install EPEL and other prereqs
+	sudo yum install -y epel-release pygpgme curl
 
-# TODO: make sure this automates ok:
-sudo /usr/sbin/passenger-memory-stats
+	# Add phusion's el7 YUM repository
+	sudo curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
 
-# TODO: this should probably be run as the application user:
-passenger-config about ruby-command
+	# Install Passenger + Apache module
+	sudo yum install -y mod_passenger
 
-# TODO: path properly, then audit &/or edit
-sudo cp ../conf/application-apache.conf.template /etc/httpd/conf.d/$APPLICATION_NAME.conf
+	# OPTIONAL: install httpd-devel
+	# so we can test apache install
+	sudo yum install -y httpd-devel
 
-# TODO: can't really do this until we are able to edit that^
-#sudo systemctl restart httpd
+  # OPTIONAL: install passenger-devel-5.0.27
+  # so passenger can build native extensions
+  # not currently available pre-built for current version of passenger / ruby-2.2.4
+  # TODO: review - fragile
+  sudo yum install -y passenger-devel-5.0.27
+
+	# restart apache
+	sudo systemctl restart httpd
+
+	# NOTE: this won't work in automation, but manually, one could test the installation thus:
+	#sudo /usr/bin/passenger-config validate-install
+
+	# TODO: make sure this automates ok:
+	sudo /usr/sbin/passenger-memory-stats
+
+	# TODO: this should probably be run as the application user:
+	passenger-config about ruby-command
+
+	app_conf=$(cat <<-EOF
+	<VirtualHost *:80>
+	    ServerName $SERVER_NAME
+	    ServerAlias $SERVER_ALIAS
+
+	    # Tell Apache and Passenger where your app's 'public' directory is
+	    DocumentRoot $APPLICATION_INSTALL_LOCATION/public
+
+	    PassengerRuby $RUBY
+	    PassengerAppEnv $RAILS_ENVIRONMENT
+	    PassengerDefaultUser $APPLICATION_USER
+	    PassengerDefaultGroup $APPLICATION_USER
+	    PassengerFriendlyErrorPages on
+
+	    # Relax Apache security settings
+	    <Directory $APPLICATION_INSTALL_LOCATION/public>
+	      Allow from all
+	      Options -MultiViews
+	      #Uncomment this if you're on Apache >= 2.4:
+	      Require all granted
+	    </Directory>
+	</VirtualHost>
+EOF
+	)
+
+	# TODO: test
+	echo "$app_conf" | sudo tee /etc/httpd/conf.d/$APPLICATION_NAME.conf
+
+	sudo systemctl restart httpd
+
+	echo +passenger_apache >> $ADMIN_HOME/.provisioning-progress
+	echo "--> Passenger & apache now configured."
+fi
