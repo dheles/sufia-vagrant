@@ -67,8 +67,7 @@ EOF
 
 	# NOTE: currently a problem with rubyracer. use nodejs instead
 	# TODOn't: gem 'therubyracer', platforms: :ruby
-	# install a javascript runtime
-	sudo yum install -y nodejs
+	# nodejs installed in bootstrap.sh
 
 	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_BUILD_LOCATION && bundle install --path vendor/bundle"
 	# error: quiver:///notes/5AD6FA54-F5AE-4573-8177-BFC6D587499F

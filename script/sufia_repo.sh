@@ -3,7 +3,7 @@
 # installs a customized sufia instance from a repo
 function usage
 {
-  echo "usage: sufia_repo [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME]] | [-h]]"
+  echo "usage: sufia_repo [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME]] [-e RAILS_ENVIRONMENT]] | [-h]]"
 }
 
 # set defaults:
@@ -14,23 +14,27 @@ APPLICATION_USER="sufia"
 APPLICATION_NAME="newsletter-demo"
 APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 REPO="https://github.com/dheles/archives-demo.git"
-BRANCH="--branch active-fedora_lessthan_9.8"
+# if specifying a branch, use something like "--branch BRANCH_NAME"
+BRANCH=""
+RAILS_ENVIRONMENT="development"
 
 # process arguments:
 while [ "$1" != "" ]; do
   case $1 in
-    -a | --admin )    shift
-                      ADMIN=$1
-                      ;;
-    -u | --user )     APPLICATION_USER=$1
-                      ;;
-    -n | --name )     APPLICATION_NAME=$1
-                      ;;
-    -h | --help )     usage
-                      exit
-                      ;;
-    * )               usage
-                      exit 1
+    -a | --admin )        shift
+                          ADMIN=$1
+                          ;;
+    -u | --user )         APPLICATION_USER=$1
+                          ;;
+    -n | --name )         APPLICATION_NAME=$1
+                          ;;
+    -e | --environment )  RAILS_ENVIRONMENT=$1
+                          ;;
+    -h | --help )         usage
+                          exit
+                          ;;
+    * )                   usage
+                          exit 1
   esac
   shift
 done
@@ -53,8 +57,16 @@ else
   fi
 	git clone $REPO $BRANCH $APPLICATION_INSTALL_LOCATION
 	sudo chown -R $APPLICATION_USER: $APPLICATION_INSTALL_LOCATION
-	# TODO: assumes a production deployment. parameterize.
-	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle install --deployment --without development"
+
+	# set install arguments appropriate for the environment
+  INSTALL_ARGS=""
+  if [ $RAILS_ENVIRONMENT = "production" ]; then
+    INSTALL_ARGS="--deployment --without development"
+  else
+    INSTALL_ARGS="--path vendor/bundle"
+  fi
+
+	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle install --path vendor/bundle $INSTALL_ARGS"
   echo +$APPLICATION_NAME >> $ADMIN_HOME/.provisioning-progress
 	echo "--> $APPLICATION_NAME created"
 fi

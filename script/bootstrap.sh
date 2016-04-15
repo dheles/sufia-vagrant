@@ -128,7 +128,13 @@ else
   echo "--> application user now added."
 fi
 
-# continue with new_project or deployment provisioners or manual install
-
-# apache
-# sudo yum install -y httpd
+# NOTE: currently a problem with rubyracer gem. use nodejs instead
+# install a javascript runtime
+if grep -q +javascript_runtime $ADMIN_HOME/.provisioning-progress; then
+  echo "--> javascript_runtime already added, moving on."
+else
+  echo "--> installing javascript_runtime..."
+  sudo yum install -y nodejs
+  echo +javascript_runtime >> $ADMIN_HOME/.provisioning-progress
+  echo "--> javascript_runtime now installed."
+fi

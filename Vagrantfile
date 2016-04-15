@@ -23,7 +23,7 @@ Vagrant.configure(2) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   config.vm.network "forwarded_port", guest: 80, host: 8081
-  config.vm.network "forwarded_port", guest: 3000, host: 3001
+  # config.vm.network "forwarded_port", guest: 3000, host: 3001
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -81,6 +81,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision "confirmation", type: "shell", path: "script/bootstrap_confirm.sh"
 
 
+  # TODO: review (& remove?)
   # provision authorized ssh key for deployment
   config.vm.provision "file", source: "public_ssh_key/authorized_key.pub", destination: ".ssh/authorized_key.pub"
   config.vm.provision "authorized key", type: "shell", path: "script/authorized_key.sh"
@@ -92,44 +93,38 @@ Vagrant.configure(2) do |config|
   # config.nfs.map_gid=1000
   #config.vm.synced_folder "newsletter-demo", "/opt/newsletter-demo" #, type: "nfs"
 
-  # run the following series only to setup a new sufia instance
-  # begin: new sufia series
-  config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
-  config.vm.provision "new sufia", type: "shell", path: "script/new_sufia.sh"
-  config.vm.provision "config templates", type: "shell", path: "script/config_templates.sh"
-  config.vm.provision "move sufia", type: "shell", path: "script/move_sufia.sh"
-  config.vm.synced_folder "project-code", "/vagrant"
-  # TODO: script copy to synced_folder for checking into GitHub and to deployment location of testing
-  # end: new sufia series
+  # --- EITHER: ---
+  # run the following series only to build a new sufia instance
+  # begin: build series
+  # config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
+  # config.vm.provision "new sufia", type: "shell", path: "script/new_sufia.sh"
+  # config.vm.provision "config templates", type: "shell", path: "script/config_templates.sh"
+  # config.vm.provision "move sufia", type: "shell", path: "script/move_sufia.sh"
+  # config.vm.synced_folder "project-code", "/vagrant"
+  # end: build series
 
-  # TODO: provision setup of a sufia instance from a git(hub) repo
-  #config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh"
+  # --- OR: ---
+  # run the following series to deploy a sufia instance from a git(hub) repo
+  # begin: deploy series
+  config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh"
+  # end: deploy series
 
-  # untested. run to configure environment variables
   config.vm.provision "environment variables", type: "shell", path: "script/env_vars.sh"
 
-  # unfinished. run to setup config files.
   config.vm.provision "config files", type: "shell", path: "script/config_files.sh"
 
-  # unfininished. run to setup db. presumably for new project or one from git
   config.vm.provision "database setup", type: "shell", path: "script/sufia_db.sh"
 
-  # unfininished. run to setup solr and fedora. not likely to be run in final production
   config.vm.provision "hydra jetty", type: "shell", path: "script/hydra-jetty.sh"
 
-  # unfinished. run to configure email
   config.vm.provision "configure email", type: "shell", path: "script/mail_config.sh"
 
-  # unfinished. run to start background workers
   config.vm.provision "background workers", type: "shell", path: "script/background_workers.sh"
 
-  # unfinished. run to configure firewall
   config.vm.provision "firewall", type: "shell", path: "script/firewall.sh"
 
-  # unfinished. run to install & configure passenger + apache
   config.vm.provision "passenger + apache", type: "shell", path: "script/passenger_apache.sh"
 
-  # unfinished. run to precompile and finalize deployment
   config.vm.provision "precompile", type: "shell", path: "script/precompile.sh"
 
   # TODO: hey, look at this guy: https://gist.github.com/rrosiek/8190550
