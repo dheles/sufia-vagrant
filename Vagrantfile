@@ -1,6 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+ADMIN="-a vagrant"
+RAILS_ENVIRONMENT="-e production"
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -76,6 +79,14 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get update
   #   sudo apt-get install -y apache2
   # SHELL
+
+  # # NOTE: when using either short or long option names in our provisioning scripts,
+  # # we can't let Vagrant pass them in an array. instead, we must concatenate them:
+  # ARG_A="-a one"
+  # ARG_B="--arg_b two"
+  # TEST_ARGS = "#{ARG_A} #{ARG_B}"
+  # config.vm.provision "test", type: "shell", path: "script/arg_test.sh", args: TEST_ARGS
+
   config.vm.provision "install", type: "shell", path: "script/bootstrap.sh"
   config.vm.provision "ruby_and_rails", type: "shell", path: "script/ruby_and_rails.sh"
   config.vm.provision "confirmation", type: "shell", path: "script/bootstrap_confirm.sh"
@@ -106,26 +117,26 @@ Vagrant.configure(2) do |config|
   # --- OR: ---
   # run the following series to deploy a sufia instance from a git(hub) repo
   # begin: deploy series
-  config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh"
+  config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh", args: RAILS_ENVIRONMENT
   # end: deploy series
 
-  config.vm.provision "environment variables", type: "shell", path: "script/env_vars.sh"
+  config.vm.provision "environment variables", type: "shell", path: "script/env_vars.sh", args: RAILS_ENVIRONMENT
 
   config.vm.provision "config files", type: "shell", path: "script/config_files.sh"
 
-  config.vm.provision "database setup", type: "shell", path: "script/sufia_db.sh"
+  config.vm.provision "database setup", type: "shell", path: "script/sufia_db.sh", args: RAILS_ENVIRONMENT
 
   config.vm.provision "hydra jetty", type: "shell", path: "script/hydra-jetty.sh"
 
   config.vm.provision "configure email", type: "shell", path: "script/mail_config.sh"
 
-  config.vm.provision "background workers", type: "shell", path: "script/background_workers.sh"
+  config.vm.provision "background workers", type: "shell", path: "script/background_workers.sh", args: RAILS_ENVIRONMENT
 
   config.vm.provision "firewall", type: "shell", path: "script/firewall.sh"
 
-  config.vm.provision "passenger + apache", type: "shell", path: "script/passenger_apache.sh"
+  config.vm.provision "passenger + apache", type: "shell", path: "script/passenger_apache.sh", args: RAILS_ENVIRONMENT
 
-  config.vm.provision "precompile", type: "shell", path: "script/precompile.sh"
+  config.vm.provision "precompile", type: "shell", path: "script/precompile.sh", args: RAILS_ENVIRONMENT
 
   # TODO: hey, look at this guy: https://gist.github.com/rrosiek/8190550
 end

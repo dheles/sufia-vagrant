@@ -29,11 +29,14 @@ while [ "$1" != "" ]; do
     -a | --admin )    shift
                       ADMIN=$1
                       ;;
-    -n | --name )     APPLICATION_NAME=$1
+    -n | --name )     shift
+                      APPLICATION_NAME=$1
                       ;;
-    -m | --email )    DEFAULT_EMAIL=$1
+    -m | --email )    shift
+                      DEFAULT_EMAIL=$1
                       ;;
-    -s | --smtp )    	SMTP_ADDRESS=$1
+    -s | --smtp )    	shift
+                      SMTP_ADDRESS=$1
                       ;;
     -h | --help )     usage
                       exit

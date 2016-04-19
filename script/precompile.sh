@@ -22,11 +22,14 @@ while [ "$1" != "" ]; do
     -a | --admin )    		shift
                       		ADMIN=$1
                       		;;
-    -u | --user )     		APPLICATION_USER=$1
+    -u | --user )     		shift
+                          APPLICATION_USER=$1
                       		;;
-    -n | --name )     		APPLICATION_NAME=$1
+    -n | --name )     		shift
+                          APPLICATION_NAME=$1
                       		;;
-		-e | --environment )  RAILS_ENVIRONMENT=$1
+		-e | --environment )  shift
+                          RAILS_ENVIRONMENT=$1
 													;;
     -h | --help )     		usage
                       		exit
@@ -49,7 +52,7 @@ if grep -q +precompile $ADMIN_HOME/.provisioning-progress; then
 else
   echo "--> precompiling assets"
 
-	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle exec rake assets:precompile RAILS_ENV=$RAILS_ENVIRONMENT"
+	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle exec rake --silent assets:precompile RAILS_ENV=$RAILS_ENVIRONMENT"
 	sudo systemctl restart httpd
 
 	echo +precompile >> $ADMIN_HOME/.provisioning-progress

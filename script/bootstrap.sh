@@ -20,7 +20,8 @@ while [ "$1" != "" ]; do
     -a | --admin )    shift
                       ADMIN=$1
                       ;;
-    -u | --user )     APPLICATION_USER=$1
+    -u | --user )     shift
+                      APPLICATION_USER=$1
                       ;;
     -h | --help )     usage
                       exit

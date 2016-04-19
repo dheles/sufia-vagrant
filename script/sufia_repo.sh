@@ -24,11 +24,14 @@ while [ "$1" != "" ]; do
     -a | --admin )        shift
                           ADMIN=$1
                           ;;
-    -u | --user )         APPLICATION_USER=$1
+    -u | --user )         shift
+                          APPLICATION_USER=$1
                           ;;
-    -n | --name )         APPLICATION_NAME=$1
+    -n | --name )         shift
+                          APPLICATION_NAME=$1
                           ;;
-    -e | --environment )  RAILS_ENVIRONMENT=$1
+    -e | --environment )  shift
+                          RAILS_ENVIRONMENT=$1
                           ;;
     -h | --help )         usage
                           exit
