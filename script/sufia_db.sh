@@ -75,7 +75,7 @@ else
 	# # TODO: review this:
 	# sudo su - $APPLICATION_USER bash -c "sed -i 's/password:/#password:/g' /opt/$APPLICATION_NAME/config/database.yml"
 
-	var_file="$APPLICATION_INSTALL_LOCATION/.rbenv-vars"
+	var_file="$APPLICATION_INSTALL_LOCATION/config/application.yml"
 	if [ ! -f "$var_file" ]; then
 	  sudo su - $APPLICATION_USER bash -c "touch $var_file"
 	  echo "--> Environment variables file created in $var_file"
@@ -85,11 +85,11 @@ else
 	password_var="NEWSLETTER-DEMO_DATABASE_PASSWORD"
 	grep -q "$password_var" "$var_file" &&
 	{
-		sudo su - $APPLICATION_USER bash -c "sed -i 's/$password_var.*/$password_var=$APPLICATION_USER_PASSWORD/' $var_file"
+		sudo su - $APPLICATION_USER bash -c "sed -i 's/$password_var.*/$password_var: $APPLICATION_USER_PASSWORD/' $var_file"
 		echo "--> Database password updated in environment variables file"
 	} ||
 	{
-		sudo su - $APPLICATION_USER bash -c "echo $password_var=$APPLICATION_USER_PASSWORD >> $var_file"
+		sudo su - $APPLICATION_USER bash -c "echo $password_var: $APPLICATION_USER_PASSWORD >> $var_file"
 		echo "--> Database password added to environment variables file"
 	}
 	sudo su - $APPLICATION_USER bash -c "sed -i 's/username:.*/username: $APPLICATION_USER/' $APPLICATION_INSTALL_LOCATION/config/database.yml"

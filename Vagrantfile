@@ -1,7 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+VERSION="-v 0.2.1.0"
 ADMIN="-a vagrant"
+BRANCH="-b figaro"
 RAILS_ENVIRONMENT="-e production"
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
@@ -25,7 +27,9 @@ Vagrant.configure(2) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.network "forwarded_port", guest: 80, host: 8081
+  config.vm.network "forwarded_port", guest: 80, host: 8082
+  config.vm.network "forwarded_port", guest: 8983, host: 8983, auto_correct: false
+  config.vm.network "forwarded_port", guest: 8984, host: 8984, auto_correct: false
   # config.vm.network "forwarded_port", guest: 3000, host: 3001
 
   # Create a private network, which allows host-only access to the machine
@@ -59,7 +63,7 @@ Vagrant.configure(2) do |config|
   # View the documentation for the provider you are using for more
   # information on available options.
   config.vm.provider "virtualbox" do |vb|
-      vb.name = "archives-demo"
+      vb.name = "sufia_6_dev"
   end
 
   # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
@@ -88,14 +92,14 @@ Vagrant.configure(2) do |config|
   # config.vm.provision "test", type: "shell", path: "script/arg_test.sh", args: TEST_ARGS
 
   config.vm.provision "install", type: "shell", path: "script/bootstrap.sh"
-  config.vm.provision "ruby_and_rails", type: "shell", path: "script/ruby_and_rails.sh"
+  config.vm.provision "ruby_and_rails", type: "shell", path: "script/ruby_and_rails_alt.sh"
   config.vm.provision "confirmation", type: "shell", path: "script/bootstrap_confirm.sh"
 
 
   # TODO: review (& remove?)
   # provision authorized ssh key for deployment
-  config.vm.provision "file", source: "public_ssh_key/authorized_key.pub", destination: ".ssh/authorized_key.pub"
-  config.vm.provision "authorized key", type: "shell", path: "script/authorized_key.sh"
+  # config.vm.provision "file", source: "public_ssh_key/authorized_key.pub", destination: ".ssh/authorized_key.pub"
+  # config.vm.provision "authorized key", type: "shell", path: "script/authorized_key.sh"
 
   # NOTE: putting this down here does not affect the order in which it happens.
   # see: https://github.com/mitchellh/vagrant/issues/936
@@ -108,7 +112,7 @@ Vagrant.configure(2) do |config|
   # run the following series only to build a new sufia instance
   # begin: build series
   # config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
-  # config.vm.provision "new sufia", type: "shell", path: "script/new_sufia.sh"
+  # config.vm.provision "new sufia", type: "shell", path: "script/new_sufia.sh", args: VERSION
   # config.vm.provision "config templates", type: "shell", path: "script/config_templates.sh"
   # config.vm.provision "move sufia", type: "shell", path: "script/move_sufia.sh"
   # config.vm.synced_folder "project-code", "/vagrant"
@@ -117,7 +121,8 @@ Vagrant.configure(2) do |config|
   # --- OR: ---
   # run the following series to deploy a sufia instance from a git(hub) repo
   # begin: deploy series
-  config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh", args: RAILS_ENVIRONMENT
+  REPO_ARGS = [RAILS_ENVIRONMENT, BRANCH].join(" ")
+  config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh", args: REPO_ARGS
   # end: deploy series
 
   config.vm.provision "environment variables", type: "shell", path: "script/env_vars.sh", args: RAILS_ENVIRONMENT

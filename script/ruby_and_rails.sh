@@ -11,6 +11,8 @@ function usage
 # set defaults:
 ADMIN="vagrant"
 ADMIN_HOME="/home/$ADMIN"
+APPLICATION_USER="sufia"
+RBENV_HOME="/home/$APPLICATION_USER/rbenv" #previously: /usr/local/rbenv
 
 # process arguments:
 while [ "$1" != "" ]; do
@@ -44,15 +46,15 @@ else
 	# Install dependent packages
 	sudo yum install -y gcc bzip2 openssl-devel libyaml-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel
 
-	# Check if /usr/local/rbenv already exists
-	if [[ -d "/usr/local/rbenv" ]]; then
-	  echo "-->  /usr/local/rbenv already exists, moving on.";
+	# Check if $RBENV_HOME already exists
+	if [[ -d "$RBENV_HOME" ]]; then
+	  echo "-->  $RBENV_HOME already exists, moving on.";
 	else
 	  echo "Installing rbenv"
 		# Install rbenv
-		git clone git://github.com/sstephenson/rbenv.git /usr/local/rbenv
-		git clone git://github.com/sstephenson/ruby-build.git /usr/local/rbenv/plugins/ruby-build
-		git clone https://github.com/rbenv/rbenv-vars.git /usr/local/rbenv/plugins/rbenv-vars
+		git clone git://github.com/sstephenson/rbenv.git $RBENV_HOME
+		git clone git://github.com/sstephenson/ruby-build.git $RBENV_HOME/plugins/ruby-build
+		git clone https://github.com/rbenv/rbenv-vars.git $RBENV_HOME/plugins/rbenv-vars
 
 		# Check if clone succesful
 		if [ $? -gt 0 ]; then
@@ -60,19 +62,30 @@ else
 		  exit 1;
 		fi
 
-		# Add rbenv to the path
-		echo '# rbenv setup - only add RBENV PATH variables if no single user install found' > /etc/profile.d/rbenv.sh
-		echo 'if [[ ! -d "${HOME}/.rbenv" ]]; then' >> /etc/profile.d/rbenv.sh
-		echo '  export RBENV_ROOT=/usr/local/rbenv' >> /etc/profile.d/rbenv.sh
-		echo '  export PATH="$RBENV_ROOT/bin:$PATH"' >> /etc/profile.d/rbenv.sh
-		echo '  eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh
-		echo 'fi'  >> /etc/profile.d/rbenv.sh
+    # Optionally, try to compile dynamic bash extension to speed up rbenv.
+    # Don't worry if it fails; rbenv will still work normally:
+    cd $RBENV_HOME && src/configure && make -C src
+
+		# Add rbenv to the application user's path
+#     sudo su - $APPLICATION_USER bash -c "echo export PATH=\"$RBENV_HOME/bin:\$PATH\" >> ~/.bash_profile"
+# # TODO: not working...
+#     sudo su - sufia bash -c "echo PATH=$RBENV_HOME/bin:'$PATH' >> ~/.bash_profile"
+    # just do this for now...
+    echo 'export PATH="$HOME/.rbenv/bin:$PATH"' | sudo tee -a /home/$APPLICATION_USER/.bash_profile
+
+    # # Add rbenv to the path
+		# echo '# rbenv setup - only add RBENV PATH variables if no single user install found' > /etc/profile.d/rbenv.sh
+		# echo 'if [[ ! -d "${HOME}/.rbenv" ]]; then' >> /etc/profile.d/rbenv.sh
+		# echo "  export RBENV_ROOT=$RBENV_HOME" >> /etc/profile.d/rbenv.sh
+		# echo '  export PATH="$RBENV_ROOT/bin:$PATH"' >> /etc/profile.d/rbenv.sh
+		# echo '  eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh
+		# echo 'fi'  >> /etc/profile.d/rbenv.sh
 
 		chmod +x /etc/profile.d/rbenv.sh
 		source /etc/profile
 
 		# Install ruby-build:
-		pushd /usr/local/rbenv/plugins
+		pushd $RBENV_HOME/plugins
 		  cd ruby-build
 		  ./install.sh
 		popd
@@ -80,23 +93,25 @@ else
 
 
 		echo '---------------------------------'
-		echo '    rbenv installed system wide to /usr/local/rbenv'
+		echo "    rbenv installed to $RBENV_HOME"
 		echo '---------------------------------'
 		rbenv -v
 	fi
 
-	if [ -d /usr/local/rbenv ]; then
+	if [ -d $RBENV_HOME ]; then
 
 	  rbenv install 2.2.4
 	  rbenv rehash
 	  rbenv global 2.2.4
 
-		sudo mkdir /usr/local/rbenv/versions/2.2.4/etc/
-		sudo touch /usr/local/rbenv/versions/2.2.4/etc/gemrc
-	  echo 'gem: --no-document'  | sudo tee -a /usr/local/rbenv/versions/2.2.4/etc/gemrc
+    # TODO: fragile. fix.
+		sudo mkdir $RBENV_HOME/versions/2.2.4/etc/
+		sudo touch $RBENV_HOME/versions/2.2.4/etc/gemrc
+	  echo 'gem: --no-document'  | sudo tee -a $RBENV_HOME/versions/2.2.4/etc/gemrc
 
 	  gem update --system
 	  gem install bundler
+	  rbenv rehash
 
 	fi
 
@@ -113,6 +128,7 @@ else
 	gem install rails -v 4.2
 	sudo yum install -y libpqxx-devel
 	gem install pg -v '0.18.4'
+  rbenv rehash
 	rails -v
   echo +rails >> $ADMIN_HOME/.provisioning-progress
   echo "--> rails now installed."

@@ -54,6 +54,11 @@ if grep -q +move_sufia $ADMIN_HOME/.provisioning-progress; then
 else
   echo "--> moving $APPLICATION_NAME"
 
+  # avoid permissions errors while moving things about
+  # NOTE: still unable to copy numerous files from vendor/bundle,
+  # but we aren't checking them in, so ignoring for now
+  sudo chown -R $ADMIN: $APPLICATION_BUILD_LOCATION
+
   # copy build to synced_folder for checkin to repo
 	sudo cp -R $APPLICATION_BUILD_LOCATION $APPLICATION_REPO_LOCATION
 
@@ -65,7 +70,7 @@ else
   sudo yum -y install policycoreutils-python
   sudo semanage fcontext -a -t httpd_sys_content_t "$APPLICATION_INSTALL_LOCATION(/.*)?"
   # TODO: test w/o -v option to see if it quiets down:
-  sudo restorecon -R -v $APPLICATION_INSTALL_LOCATION
+  sudo restorecon -R $APPLICATION_INSTALL_LOCATION
 
 	echo +move_sufia >> $ADMIN_HOME/.provisioning-progress
 	echo "--> $APPLICATION_NAME moved"

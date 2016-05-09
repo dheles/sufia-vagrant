@@ -3,7 +3,7 @@
 # installs a customized sufia instance from a repo
 function usage
 {
-  echo "usage: sufia_repo [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME]] [-e RAILS_ENVIRONMENT]] | [-h]]"
+  echo "usage: sufia_repo [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME]] [-b BRANCH]] [-e RAILS_ENVIRONMENT]] | [-h]]"
 }
 
 # set defaults:
@@ -29,6 +29,9 @@ while [ "$1" != "" ]; do
                           ;;
     -n | --name )         shift
                           APPLICATION_NAME=$1
+                          ;;
+    -b | --branch )       shift
+                          BRANCH="-b $1"
                           ;;
     -e | --environment )  shift
                           RAILS_ENVIRONMENT=$1
@@ -58,6 +61,7 @@ else
   else
     sudo rm -rf $APPLICATION_INSTALL_LOCATION
   fi
+  echo "cloning: $REPO $BRANCH $APPLICATION_INSTALL_LOCATION"
 	git clone $REPO $BRANCH $APPLICATION_INSTALL_LOCATION
 	sudo chown -R $APPLICATION_USER: $APPLICATION_INSTALL_LOCATION
 
@@ -69,7 +73,8 @@ else
     INSTALL_ARGS="--path vendor/bundle"
   fi
 
-	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle install --path vendor/bundle $INSTALL_ARGS"
+  sudo su - $APPLICATION_USER bash -c "touch ~/.gemrc && echo 'gem: --no-document'  >> ~/.gemrc"
+	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle install $INSTALL_ARGS"
   echo +$APPLICATION_NAME >> $ADMIN_HOME/.provisioning-progress
 	echo "--> $APPLICATION_NAME created"
 fi

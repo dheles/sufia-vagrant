@@ -16,7 +16,7 @@ APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 RAILS_ENVIRONMENT="development"
 SERVER_NAME="archives-demo" # TODO: get from Vagrantfile or master script
 SERVER_ALIAS=""
-RUBY="/usr/local/rbenv/versions/2.2.4/bin/ruby"
+RUBY="/usr/local/bin/ruby"
 
 # current settings for stage:
 # ServerName sufia01.mse.jhu.edu
@@ -26,7 +26,7 @@ RUBY="/usr/local/rbenv/versions/2.2.4/bin/ruby"
 # current settings for prod:
 # ServerName sufia02.mse.jhu.edu
 # ServerAlias archives-demo.mse.jhu.edu archives-demo.library.jhu.edu
-# PassengerRuby /usr/local/rbenv/versions/2.2.4/bin/ruby
+# PassengerRuby /usr/local/bin/ruby
 
 # process arguments:
 while [ "$1" != "" ]; do
@@ -78,7 +78,8 @@ else
 	sudo systemctl enable httpd.service
 
 	# Install EPEL and other prereqs
-	sudo yum install -y epel-release pygpgme curl
+	sudo yum install -y epel-release yum-utils pygpgme curl
+  sudo yum-config-manager --enable epel
 
 	# Add phusion's el7 YUM repository
 	sudo curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
@@ -90,11 +91,11 @@ else
 	# so we can test apache install
 	sudo yum install -y httpd-devel
 
-  # OPTIONAL: install passenger-devel-5.0.27
+  # OPTIONAL: install passenger-devel-5.0.28
   # so passenger can build native extensions
-  # not currently available pre-built for current version of passenger / ruby-2.2.4
+  # not currently available pre-built for current version of passenger / ruby-2.2.4 or 2.2.5
   # TODO: review - fragile
-  sudo yum install -y passenger-devel-5.0.27
+  sudo yum install -y passenger-devel-5.0.28
 
 	# restart apache
 	sudo systemctl restart httpd

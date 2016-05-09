@@ -23,6 +23,8 @@ else
 	#firewall-cmd --get-active-zones
 	sudo firewall-cmd --permanent --zone=public --add-service=http
 	sudo firewall-cmd --permanent --zone=public --add-service=https
+  # NOTE: not for actual production:
+  sudo firewall-cmd --permanent --zone=public --add-port=8983/tcp
 	sudo firewall-cmd --reload
 
   echo +firewall >> $ADMIN_HOME/.provisioning-progress

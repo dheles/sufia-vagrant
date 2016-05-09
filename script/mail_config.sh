@@ -20,7 +20,7 @@ APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 DEFAULT_EMAIL="dheles@jhu.edu"
 DEFAULT_EMAIL_CONFIG1="$APPLICATION_INSTALL_LOCATION/config/initializers/mailboxer.rb"
 DEFAULT_EMAIL_CONFIG2="$APPLICATION_INSTALL_LOCATION/config/initializers/devise.rb"
-VAR_FILE="$APPLICATION_INSTALL_LOCATION/.rbenv-vars"
+VAR_FILE="$APPLICATION_INSTALL_LOCATION/config/application.yml"
 SMTP_ADDRESS="SMTP.CHANGEME.ORG"
 
 # process arguments:
@@ -69,7 +69,7 @@ else
 		echo "--> Environment variables file exists in $VAR_FILE"
 	fi
 
-	sudo su - $APPLICATION_USER bash -c "echo SMTP_ADDRESS=$SMTP_ADDRESS >> $VAR_FILE"
+	sudo su - $APPLICATION_USER bash -c "echo SMTP_ADDRESS: $SMTP_ADDRESS >> $VAR_FILE"
 
 	# TODO: confirm and clean:
 	# TODON'T: script:

@@ -21,5 +21,10 @@ wget -V
 unzip -v
 fits.sh -v
 
-# echo "ruby: "
-# ruby -v
+echo "ruby: "
+ruby -v
+
+# NOTE: don't try this. root does not have rails,
+# so it throws an error and stops provisioning.
+# echo "rails: "
+# rails -v

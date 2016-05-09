@@ -13,7 +13,7 @@ ADMIN_HOME="/home/$ADMIN"
 APPLICATION_USER="sufia"
 APPLICATION_NAME="newsletter-demo"
 APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
-VAR_FILE="$APPLICATION_INSTALL_LOCATION/.rbenv-vars"
+VAR_FILE="$APPLICATION_INSTALL_LOCATION/config/application.yml"
 RAILS_ENVIRONMENT="development"
 
 # process arguments:
@@ -61,8 +61,8 @@ else
 		echo "--> Environment variables file exists in $VAR_FILE"
 	fi
 
-  sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && echo \"SECRET_KEY_BASE=\$(bundle exec rake secret)\" >> $VAR_FILE"
-  echo "RAILS_ENV=$RAILS_ENVIRONMENT" | sudo tee -a $VAR_FILE
+  sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && echo \"SECRET_KEY_BASE: \$(bundle exec rake secret)\" >> $VAR_FILE"
+  echo "RAILS_ENV: $RAILS_ENVIRONMENT" | sudo tee -a $VAR_FILE
 
 	echo +env_vars >> $ADMIN_HOME/.provisioning-progress
 	echo "--> Environment vars now configured."
