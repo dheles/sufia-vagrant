@@ -106,7 +106,7 @@ Vagrant.configure(2) do |config|
   # Map our local user to the vagrant user in the box
   # config.nfs.map_uid=1000
   # config.nfs.map_gid=1000
-  #config.vm.synced_folder "newsletter-demo", "/opt/newsletter-demo" #, type: "nfs"
+  #config.vm.synced_folder "sufia-demo", "/opt/sufia-demo" #, type: "nfs"
 
   # --- EITHER: ---
   # run the following series only to build a new sufia instance

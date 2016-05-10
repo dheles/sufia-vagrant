@@ -11,10 +11,10 @@ ADMIN="vagrant"
 ADMIN_HOME="/home/$ADMIN"
 
 APPLICATION_USER="sufia"
-APPLICATION_NAME="newsletter-demo"
+APPLICATION_NAME="sufia-demo"
 APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 RAILS_ENVIRONMENT="development"
-SERVER_NAME="archives-demo" # TODO: get from Vagrantfile or master script
+SERVER_NAME="sufia-demo" # TODO: get from Vagrantfile or master script
 SERVER_ALIAS=""
 RUBY="/usr/local/bin/ruby"
 
@@ -25,7 +25,7 @@ RUBY="/usr/local/bin/ruby"
 
 # current settings for prod:
 # ServerName sufia02.mse.jhu.edu
-# ServerAlias archives-demo.mse.jhu.edu archives-demo.library.jhu.edu
+# ServerAlias sufia-demo.mse.jhu.edu sufia-demo.library.jhu.edu
 # PassengerRuby /usr/local/bin/ruby
 
 # process arguments:

@@ -11,7 +11,7 @@ ADMIN="vagrant"
 ADMIN_HOME="/home/$ADMIN"
 
 APPLICATION_USER="sufia"
-APPLICATION_NAME="newsletter-demo"
+APPLICATION_NAME="sufia-demo"
 APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 
 # process arguments:

@@ -11,7 +11,7 @@ ADMIN="vagrant"
 ADMIN_HOME="/home/$ADMIN"
 
 APPLICATION_USER="sufia"
-APPLICATION_NAME="newsletter-demo"
+APPLICATION_NAME="sufia-demo"
 APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 
 # process arguments:
@@ -47,7 +47,7 @@ if grep -q +hydra-jetty $ADMIN_HOME/.provisioning-progress; then
 else
   echo "--> configuring hydra-jetty"
 	# TODO: test
-	sudo su - $APPLICATION_USER bash -c "kill -INT $(cat $APPLICATION_INSTALL_LOCATION/tmp/pids/_opt_newsletter-demo_jetty_development.pid)"
+	sudo su - $APPLICATION_USER bash -c "kill -INT $(cat $APPLICATION_INSTALL_LOCATION/tmp/pids/_opt_sufia-demo_jetty_development.pid)"
 
 	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle exec rake jetty:stop"
 	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle exec rake jetty:clean"

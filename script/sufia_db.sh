@@ -12,7 +12,7 @@ ADMIN_HOME="/home/$ADMIN"
 
 APPLICATION_USER="sufia"
 APPLICATION_USER_PASSWORD="vagrant"
-APPLICATION_NAME="newsletter-demo"
+APPLICATION_NAME="sufia-demo"
 APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 RAILS_ENVIRONMENT="development"
 
@@ -82,7 +82,7 @@ else
 	else
 	  echo "--> Environment variables file exists in $var_file"
 	fi
-	password_var="NEWSLETTER-DEMO_DATABASE_PASSWORD"
+	password_var="SUFIA-DEMO_DATABASE_PASSWORD"
 	grep -q "$password_var" "$var_file" &&
 	{
 		sudo su - $APPLICATION_USER bash -c "sed -i 's/$password_var.*/$password_var: $APPLICATION_USER_PASSWORD/' $var_file"
