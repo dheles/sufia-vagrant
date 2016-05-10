@@ -3,7 +3,7 @@
 # turns a generic rails app into a sufia app
 function usage
 {
-  echo "usage: new_sufia [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME]] [-v BUILD_VERSION]] [-e RAILS_ENVIRONMENT]] | [-h]]"
+  echo "usage: new_sufia [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME]] [-v BUILD_VERSION]] | [-h]]"
 }
 
 # set defaults:
@@ -15,8 +15,6 @@ APPLICATION_USER_HOME="/home/$APPLICATION_USER"
 APPLICATION_NAME="sufia-demo"
 APPLICATION_BUILD_LOCATION="$APPLICATION_USER_HOME/$APPLICATION_NAME"
 BUILD_VERSION="0.0.0.0"
-#  TODO: test and remove, if not needed
-RAILS_ENVIRONMENT="development"
 
 # process arguments:
 while [ "$1" != "" ]; do
@@ -32,9 +30,6 @@ while [ "$1" != "" ]; do
                           ;;
     -v | --version )      shift
                           BUILD_VERSION=$1
-                          ;;
-    -e | --environment )  shift
-                          RAILS_ENVIRONMENT=$1
                           ;;
     -h | --help )         usage
                           exit
@@ -103,7 +98,18 @@ EOF
   sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_BUILD_LOCATION && bundle exec figaro install"
 
   # version the build
-  sudo su - $APPLICATION_USER bash -c "sed -i 's/sufia-vagrant version.*/sufia-vagrant version $BUILD_VERSION/' $APPLICATION_BUILD_LOCATION/README.md"
+  if [ -f $APPLICATION_BUILD_LOCATION/README.rdoc ]; then
+    rm $APPLICATION_BUILD_LOCATION/README.rdoc
+  fi
+  if [ ! -f $APPLICATION_BUILD_LOCATION/README.md ]; then
+    touch $APPLICATION_BUILD_LOCATION/README.md
+  fi
+  cat >> $APPLICATION_BUILD_LOCATION/README.md <<EOF
+JHU Libraries' Sufia 6 evaluation project
+
+This build by sufia-vagrant version $BUILD_VERSION
+https://github.com/dheles/sufia-vagrant
+EOF
 
 	echo +$APPLICATION_NAME >> $ADMIN_HOME/.provisioning-progress
 	echo "--> $APPLICATION_NAME created"

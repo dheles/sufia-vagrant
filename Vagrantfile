@@ -1,9 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-VERSION="-v 0.2.1.0"
+VERSION="-v 0.2.2.0"
 ADMIN="-a vagrant"
-BRANCH="-b figaro"
+BRANCH=""
 RAILS_ENVIRONMENT="-e production"
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
@@ -111,18 +111,18 @@ Vagrant.configure(2) do |config|
   # --- EITHER: ---
   # run the following series only to build a new sufia instance
   # begin: build series
-  # config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
-  # config.vm.provision "new sufia", type: "shell", path: "script/new_sufia.sh", args: VERSION
-  # config.vm.provision "config templates", type: "shell", path: "script/config_templates.sh"
-  # config.vm.provision "move sufia", type: "shell", path: "script/move_sufia.sh"
-  # config.vm.synced_folder "project-code", "/vagrant"
+  config.vm.provision "new project", type: "shell", path: "script/new_project.sh"
+  config.vm.provision "new sufia", type: "shell", path: "script/new_sufia.sh", args: VERSION
+  config.vm.provision "config templates", type: "shell", path: "script/config_templates.sh"
+  config.vm.provision "move sufia", type: "shell", path: "script/move_sufia.sh"
+  config.vm.synced_folder "project-code", "/vagrant"
   # end: build series
 
   # --- OR: ---
   # run the following series to deploy a sufia instance from a git(hub) repo
   # begin: deploy series
   REPO_ARGS = [RAILS_ENVIRONMENT, BRANCH].join(" ")
-  config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh", args: REPO_ARGS
+  # config.vm.provision "sufia repo", type: "shell", path: "script/sufia_repo.sh", args: REPO_ARGS
   # end: deploy series
 
   config.vm.provision "environment variables", type: "shell", path: "script/env_vars.sh", args: RAILS_ENVIRONMENT
