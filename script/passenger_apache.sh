@@ -8,11 +8,8 @@ function usage
 
 # set defaults:
 ADMIN="vagrant"
-ADMIN_HOME="/home/$ADMIN"
-
 APPLICATION_USER="sufia"
 APPLICATION_NAME="sufia-demo"
-APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 RAILS_ENVIRONMENT="development"
 SERVER_NAME="sufia-demo" # TODO: get from Vagrantfile or master script
 SERVER_ALIAS=""
@@ -36,7 +33,7 @@ while [ "$1" != "" ]; do
 		-s | --server )  			shift
                           SERVER_NAME=$1
 													;;
-		-a | --alias )  			shift
+		-l | --alias )  			shift
                           SERVER_ALIAS=$1
 													;;
 		-r | --ruby )  				shift
@@ -50,6 +47,10 @@ while [ "$1" != "" ]; do
   esac
   shift
 done
+
+# set remaining vars
+ADMIN_HOME="/home/$ADMIN"
+APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 
 if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
   touch $ADMIN_HOME/.provisioning-progress

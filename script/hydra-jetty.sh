@@ -8,11 +8,8 @@ function usage
 
 # set defaults:
 ADMIN="vagrant"
-ADMIN_HOME="/home/$ADMIN"
-
 APPLICATION_USER="sufia"
 APPLICATION_NAME="sufia-demo"
-APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 
 # process arguments:
 while [ "$1" != "" ]; do
@@ -34,6 +31,10 @@ while [ "$1" != "" ]; do
   esac
   shift
 done
+
+# set remaining vars
+ADMIN_HOME="/home/$ADMIN"
+APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 
 if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
   touch $ADMIN_HOME/.provisioning-progress

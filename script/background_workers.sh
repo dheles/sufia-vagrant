@@ -9,11 +9,8 @@ function usage
 
 # set defaults:
 ADMIN="vagrant"
-ADMIN_HOME="/home/$ADMIN"
-
 APPLICATION_USER="sufia"
 APPLICATION_NAME="sufia-demo"
-APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 RAILS_ENVIRONMENT="development"
 
 # process arguments:
@@ -39,6 +36,10 @@ while [ "$1" != "" ]; do
   esac
   shift
 done
+
+# set remaining vars
+ADMIN_HOME="/home/$ADMIN"
+APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
 
 # database setup
 if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then

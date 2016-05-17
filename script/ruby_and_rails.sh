@@ -48,7 +48,8 @@ else
 
   # don't install unnecessary docs
 	touch $ADMIN_HOME/.gemrc
-	echo 'gem: --no-document'  >> $ADMIN_HOME/.gemrc
+	echo 'install: --no-document'  >> $ADMIN_HOME/.gemrc
+	echo 'update: --no-document'  >> $ADMIN_HOME/.gemrc
 
 	cd $ADMIN_HOME
 	# TODO: review:

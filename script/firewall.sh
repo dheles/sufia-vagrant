@@ -1,9 +1,30 @@
 #!/usr/bin/env bash
 
 # configures firewall for a sufia instance
+function usage
+{
+  echo "usage: firewall [[[-a ADMIN ] | [-h]]"
+}
 
 # set defaults:
 ADMIN="vagrant"
+
+# process arguments:
+while [ "$1" != "" ]; do
+  case $1 in
+    -a | --admin )        shift
+                          ADMIN=$1
+                          ;;
+    -h | --help )         usage
+                          exit
+                          ;;
+    * )                   usage
+                          exit 1
+  esac
+  shift
+done
+
+# set remaining vars
 ADMIN_HOME="/home/$ADMIN"
 
 if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then

@@ -8,12 +8,8 @@ function usage
 
 # set defaults:
 ADMIN="vagrant"
-ADMIN_HOME="/home/$ADMIN"
-
 APPLICATION_USER="sufia"
 APPLICATION_NAME="sufia-demo"
-APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
-VAR_FILE="$APPLICATION_INSTALL_LOCATION/config/application.yml"
 RAILS_ENVIRONMENT="development"
 
 # process arguments:
@@ -30,7 +26,6 @@ while [ "$1" != "" ]; do
                           ;;
     -e | --environment )  shift
                           RAILS_ENVIRONMENT=$1
-                          echo $RAILS_ENVIRONMENT
                           ;;
     -h | --help )         usage
                           exit
@@ -41,6 +36,11 @@ while [ "$1" != "" ]; do
   esac
   shift
 done
+
+# set remaining vars
+ADMIN_HOME="/home/$ADMIN"
+APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
+VAR_FILE="$APPLICATION_INSTALL_LOCATION/config/application.yml"
 
 if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
   touch $ADMIN_HOME/.provisioning-progress
