@@ -52,6 +52,10 @@ else
 	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle exec rake jetty:stop"
 	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle exec rake jetty:clean"
 	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle exec rake sufia:jetty:config"
+
+  # adjust "production solr configuration"
+  # sed -i 's/blacklight-core/development-core/' $APPLICATION_INSTALL_LOCATION/solr/config/solrconfig.xml
+
 	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle exec rake jetty:start"
 	echo +hydra-jetty >> $ADMIN_HOME/.provisioning-progress
 	echo "--> hydra-jetty configured"
