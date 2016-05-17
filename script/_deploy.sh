@@ -10,9 +10,7 @@ function usage
 
 # set defaults:
 ADMIN="deploy"
-ADMIN_HOME="/home/$ADMIN"
 APPLICATION_USER="sufia"
-
 RAILS_ENVIRONMENT="production"
 
 # process arguments:
@@ -34,4 +32,10 @@ while [ "$1" != "" ]; do
 done
 
 # install prereqs
-sudo -u $ADMIN ./bootstrap.sh
+sudo bash bootstrap.sh -a $ADMIN -u $APPLICATION_USER
+# ruby_and_rails
+sudo bash ruby_and_rails.sh -a $ADMIN
+# confirmation
+sudo bash bootstrap_confirm.sh
+# sufia repo
+# sudo bash sufia_repo.sh -e $RAILS_ENVIRONMENT
