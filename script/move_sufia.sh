@@ -69,7 +69,6 @@ else
   # avoid SELinux issues:
   sudo yum -y install policycoreutils-python
   sudo semanage fcontext -a -t httpd_sys_content_t "$APPLICATION_INSTALL_LOCATION(/.*)?"
-  # TODO: test w/o -v option to see if it quiets down:
   sudo restorecon -R $APPLICATION_INSTALL_LOCATION
 
 	echo +move_sufia >> $ADMIN_HOME/.provisioning-progress

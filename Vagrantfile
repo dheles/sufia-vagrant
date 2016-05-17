@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-VERSION="-v 0.2.2.0"
+VERSION="-v 0.2.3.0"
 ADMIN="-a vagrant"
 BRANCH=""
 RAILS_ENVIRONMENT="-e production"
@@ -92,7 +92,7 @@ Vagrant.configure(2) do |config|
   # config.vm.provision "test", type: "shell", path: "script/arg_test.sh", args: TEST_ARGS
 
   config.vm.provision "install", type: "shell", path: "script/bootstrap.sh"
-  config.vm.provision "ruby_and_rails", type: "shell", path: "script/ruby_and_rails_alt.sh"
+  config.vm.provision "ruby_and_rails", type: "shell", path: "script/ruby_and_rails.sh"
   config.vm.provision "confirmation", type: "shell", path: "script/bootstrap_confirm.sh"
 
 

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 # precompiles assets for a sufia instance
-# TODO: see about adding the extras in
 function usage
 {
   echo "usage: precompile [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME] [-e RAILS_ENVIRONMENT] | [-h]]"

@@ -18,16 +18,6 @@ SERVER_NAME="sufia-demo" # TODO: get from Vagrantfile or master script
 SERVER_ALIAS=""
 RUBY="/usr/local/bin/ruby"
 
-# current settings for stage:
-# ServerName sufia01.mse.jhu.edu
-# ServerAlias sufia.mse.jhu.edu
-# PassengerRuby /opt/rbenv/versions/2.2.4/bin/ruby
-
-# current settings for prod:
-# ServerName sufia02.mse.jhu.edu
-# ServerAlias sufia-demo.mse.jhu.edu sufia-demo.library.jhu.edu
-# PassengerRuby /usr/local/bin/ruby
-
 # process arguments:
 while [ "$1" != "" ]; do
   case $1 in

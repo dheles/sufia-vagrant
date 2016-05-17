@@ -17,11 +17,11 @@ ADMIN_HOME="/home/$ADMIN"
 APPLICATION_USER="sufia"
 APPLICATION_NAME="sufia-demo"
 APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
-DEFAULT_EMAIL="dheles@jhu.edu"
+DEFAULT_EMAIL="CHANGEME@CHANGEME.EDU"
 DEFAULT_EMAIL_CONFIG1="$APPLICATION_INSTALL_LOCATION/config/initializers/mailboxer.rb"
 DEFAULT_EMAIL_CONFIG2="$APPLICATION_INSTALL_LOCATION/config/initializers/devise.rb"
 VAR_FILE="$APPLICATION_INSTALL_LOCATION/config/application.yml"
-SMTP_ADDRESS="SMTP.CHANGEME.ORG"
+SMTP_ADDRESS="SMTP.CHANGEME.EDU"
 
 # process arguments:
 while [ "$1" != "" ]; do
@@ -70,32 +70,6 @@ else
 	fi
 
 	sudo su - $APPLICATION_USER bash -c "echo SMTP_ADDRESS: $SMTP_ADDRESS >> $VAR_FILE"
-
-	# TODO: confirm and clean:
-	# TODON'T: script:
-	# additional settings in:
-	# config/environments/development.rb and config/environments/production.rb:
-	# When setting this property to :smtp, also ensure
-	# additional config.action_mailer properties are
-	# set in  ../initializers/setup_mail.rb
-	#config.action_mailer.delivery_method = :smtp
-
-	# # rename and edit:
-	# # config/initializers/setup_mail.rb.template
-	# ActionMailer::Base.smtp_settings = {
-	#   address: ENV["SMTP_ADDRESS"]
-	# }
-
-# 	email_environment=$(cat <<-EOF
-# 		# email settings
-# 		config.action_mailer.delivery_method = :smtp
-# 		config.action_mailer.smtp_settings = {
-# 			address: ENV["SMTP_ADDRESS"]
-# 		}
-# 	end
-# EOF
-# 	)
-# 	sed -i "s/end/$email_environment/" $EMAIL_ENVIRONMENT
 
 	echo +mail_config >> $ADMIN_HOME/.provisioning-progress
 	echo "--> email configured"
