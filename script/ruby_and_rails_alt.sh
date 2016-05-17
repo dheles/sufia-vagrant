@@ -10,17 +10,13 @@ function usage
 
 # set defaults:
 ADMIN="vagrant"
-ADMIN_HOME="/home/$ADMIN"
-APPLICATION_USER="sufia"
-RUBY_VERSION="2.2.5"
-RUBY_URL="https://cache.ruby-lang.org/pub/ruby/2.2/ruby-$RUBY_VERSION.tar.gz"
-
 
 # process arguments:
 while [ "$1" != "" ]; do
   case $1 in
     -a | --admin )    shift
                       ADMIN=$1
+                      ADMIN_HOME="/home/$ADMIN"
                       ;;
     -h | --help )     usage
                       exit
@@ -30,6 +26,11 @@ while [ "$1" != "" ]; do
   esac
   shift
 done
+
+# set remaining vars
+ADMIN_HOME="/home/$ADMIN"
+RUBY_VERSION="2.2.5"
+RUBY_URL="https://cache.ruby-lang.org/pub/ruby/2.2/ruby-$RUBY_VERSION.tar.gz"
 
 # ruby
 if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then

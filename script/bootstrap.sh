@@ -11,7 +11,6 @@ function usage
 
 # set defaults:
 ADMIN="vagrant"
-ADMIN_HOME="/home/$ADMIN"
 APPLICATION_USER="sufia"
 
 # process arguments:
@@ -31,6 +30,9 @@ while [ "$1" != "" ]; do
   esac
   shift
 done
+
+# set remaining vars
+ADMIN_HOME="/home/$ADMIN"
 
 if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
   sudo su - $ADMIN bash -c "touch $ADMIN_HOME/.provisioning-progress"
