@@ -54,30 +54,33 @@ else
 
 	cat >> $APPLICATION_BUILD_LOCATION/Gemfile <<EOF
 
-  # Sufia-related dependencies
-  gem 'sufia', '6.6.0'
-  gem 'kaminari', github: 'jcoyne/kaminari', branch: 'sufia'  # required to handle pagination properly in dashboard. See https://github.com/amatsuda/kaminari/pull/322'
+# Sufia-related dependencies
+gem 'sufia', '6.6.1'
+gem 'kaminari', github: 'jcoyne/kaminari', branch: 'sufia'  # required to handle pagination properly in dashboard. See https://github.com/amatsuda/kaminari/pull/322'
 
-  # resolve hopefully temporary issue with devise-guests:
-  gem 'rsolr', '~> 1.0.6'
-  gem 'devise'
-  gem 'devise-guests', '~> 0.3'
+# resolve hopefully temporary issue with devise-guests:
+gem 'rsolr', '~> 1.0.6'
+gem 'devise'
+gem 'devise-guests', '~> 0.3'
 
-  # limit ActiveFedora to safe range
-  gem 'active-fedora', '~> 9.4', '< 9.8'
+# limit ActiveFedora to safe range
+gem 'active-fedora', '~> 9.4', '< 9.8'
 
-  # pin mail gem to avoid mime-types compatibility issues
-  gem 'mail', '2.6.3'
+# pin mail gem to avoid mime-types compatibility issues
+gem 'mail', '2.6.3'
 
-  # we need jettywrapper, even for a "production" build for now
-  gem 'jettywrapper'
+# we need jettywrapper, even for a "production" build for now
+gem 'jettywrapper'
 
-  # use figaro to set environment variables
-  gem 'figaro'
+# use figaro to set environment variables
+gem 'figaro'
 
-  group :development, :test do
-    gem 'rspec-rails'
-  end
+# hydra role management
+gem "hydra-role-management"
+
+group :development, :test do
+  gem 'rspec-rails'
+end
 
 EOF
 

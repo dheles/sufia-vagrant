@@ -74,8 +74,7 @@ else
     INSTALL_ARGS="--path vendor/bundle"
   fi
 
-  sudo su - $APPLICATION_USER bash -c "touch ~/.gemrc && echo 'gem: --no-document'  >> ~/.gemrc"
-	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle install $INSTALL_ARGS"
+  sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle install $INSTALL_ARGS"
   echo +$APPLICATION_NAME >> $ADMIN_HOME/.provisioning-progress
 	echo "--> $APPLICATION_NAME created"
 fi

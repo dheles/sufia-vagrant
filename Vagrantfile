@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-VERSION="-v 0.2.3.0"
+VERSION="-v 1.0.0.0"
 ADMIN="-a vagrant"
 BRANCH=""
 RAILS_ENVIRONMENT="-e production"

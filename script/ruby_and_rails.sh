@@ -30,6 +30,7 @@ done
 ADMIN_HOME="/home/$ADMIN"
 RUBY_VERSION="2.2.5"
 RUBY_URL="https://cache.ruby-lang.org/pub/ruby/2.2/ruby-$RUBY_VERSION.tar.gz"
+RUBYGEMS_SYSTEM_WIDE_CONFIG_FILE="/usr/local/etc/gemrc"
 
 # ruby
 if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
@@ -47,9 +48,9 @@ else
   echo "--> Installing ruby..."
 
   # don't install unnecessary docs
-	touch $ADMIN_HOME/.gemrc
-	echo 'install: --no-document'  >> $ADMIN_HOME/.gemrc
-	echo 'update: --no-document'  >> $ADMIN_HOME/.gemrc
+	sudo touch $RUBYGEMS_SYSTEM_WIDE_CONFIG_FILE
+  echo 'install: --no-document'  | sudo tee -a $RUBYGEMS_SYSTEM_WIDE_CONFIG_FILE
+  echo 'update: --no-document'  | sudo tee -a $RUBYGEMS_SYSTEM_WIDE_CONFIG_FILE
 
 	cd $ADMIN_HOME
 	# TODO: review:
