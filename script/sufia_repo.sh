@@ -44,7 +44,7 @@ done
 # set remaining vars
 ADMIN_HOME="/home/$ADMIN"
 APPLICATION_INSTALL_LOCATION="/opt/$APPLICATION_NAME"
-REPO="https://github.com/dheles/sufia-demo.git"
+REPO="https://github.com/jhu-sheridan-libraries/sufia-demo.git"
 
 if [ ! -f $ADMIN_HOME/.provisioning-progress ]; then
   touch $ADMIN_HOME/.provisioning-progress

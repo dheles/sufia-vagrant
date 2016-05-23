@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 # provisioning-progress as seen here: https://gist.github.com/luciancancescu/57025d19da727cfdc18f
-# TODO: vagrant runs all provisioning as root,
-# ...so anything we want owned as vagrant, we'll have to make so (or su vagrant at beginning of script or something)
 
 function usage
 {

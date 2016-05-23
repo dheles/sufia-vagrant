@@ -30,7 +30,6 @@ Vagrant.configure(2) do |config|
   config.vm.network "forwarded_port", guest: 80, host: 8082
   config.vm.network "forwarded_port", guest: 8983, host: 8983, auto_correct: false
   config.vm.network "forwarded_port", guest: 8984, host: 8984, auto_correct: false
-  # config.vm.network "forwarded_port", guest: 3000, host: 3001
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -46,7 +45,6 @@ Vagrant.configure(2) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
-  # config.vm.synced_folder ".", "/vagrant"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -73,9 +71,6 @@ Vagrant.configure(2) do |config|
   #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
   # end
 
-  # provision files
-  # config.vm.provision "file", source: "rbenv.sh", destination: "rbenv.sh"
-
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
@@ -85,28 +80,17 @@ Vagrant.configure(2) do |config|
   # SHELL
 
   # # NOTE: when using either short or long option names in our provisioning scripts,
-  # # we can't let Vagrant pass them in an array. instead, we must concatenate them:
+  # # we can't let Vagrant pass them in an array. instead, we must either concatenate them:
   # ARG_A="-a one"
   # ARG_B="--arg_b two"
   # TEST_ARGS = "#{ARG_A} #{ARG_B}"
+  # # ...or join them:
+  # TEST_ARGS = [ARG_A, ARG_B].join(" ")
   # config.vm.provision "test", type: "shell", path: "script/arg_test.sh", args: TEST_ARGS
 
   config.vm.provision "install", type: "shell", path: "script/bootstrap.sh"
   config.vm.provision "ruby_and_rails", type: "shell", path: "script/ruby_and_rails.sh"
   config.vm.provision "confirmation", type: "shell", path: "script/bootstrap_confirm.sh"
-
-
-  # TODO: review (& remove?)
-  # provision authorized ssh key for deployment
-  # config.vm.provision "file", source: "public_ssh_key/authorized_key.pub", destination: ".ssh/authorized_key.pub"
-  # config.vm.provision "authorized key", type: "shell", path: "script/authorized_key.sh"
-
-  # NOTE: putting this down here does not affect the order in which it happens.
-  # see: https://github.com/mitchellh/vagrant/issues/936
-  # Map our local user to the vagrant user in the box
-  # config.nfs.map_uid=1000
-  # config.nfs.map_gid=1000
-  #config.vm.synced_folder "sufia-demo", "/opt/sufia-demo" #, type: "nfs"
 
   # --- EITHER: ---
   # run the following series only to build a new sufia instance
@@ -143,6 +127,4 @@ Vagrant.configure(2) do |config|
   config.vm.provision "passenger + apache", type: "shell", path: "script/passenger_apache.sh", args: RAILS_ENVIRONMENT
 
   config.vm.provision "precompile", type: "shell", path: "script/precompile.sh", args: RAILS_ENVIRONMENT
-
-  # TODO: hey, look at this guy: https://gist.github.com/rrosiek/8190550
 end

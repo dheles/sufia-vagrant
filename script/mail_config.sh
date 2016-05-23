@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-# TODO: confirm we have all the right files for configuration
 # TODO: consider using .template files instead
-# TODO: get values from environment vars for production
 
 # configures email for a sufia instance
 function usage

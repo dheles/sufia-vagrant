@@ -47,7 +47,7 @@ if grep -q +hydra-jetty $ADMIN_HOME/.provisioning-progress; then
   echo "--> hydra-jetty already configured, moving on."
 else
   echo "--> configuring hydra-jetty"
-	# TODO: test
+	# NOTE: since hydra-jetty does not provide a production core, the pid still indicates "development", regardless of the environment
 	sudo su - $APPLICATION_USER bash -c "kill -INT $(cat $APPLICATION_INSTALL_LOCATION/tmp/pids/_opt_sufia-demo_jetty_development.pid)"
 
 	sudo su - $APPLICATION_USER bash -c "cd $APPLICATION_INSTALL_LOCATION && bundle exec rake jetty:stop"

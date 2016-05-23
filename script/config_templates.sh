@@ -2,7 +2,6 @@
 
 # generates template files from the config files
 # during deployment, this process can be reversed with the config_files.sh script
-# TODO: finish for provisioning
 function usage
 {
   echo "usage: config_templates [[[-a ADMIN ] [-u APPLICATION_USER]] [-n APPLICATION_NAME]] | [-h]]"
