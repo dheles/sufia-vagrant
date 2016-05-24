@@ -1,3 +1,4 @@
 .vagrant
 public_ssh_key/authorized_key.pub
-project-code
+project-code/*
+!project-code/.keep
